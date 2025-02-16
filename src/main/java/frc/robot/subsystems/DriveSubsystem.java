@@ -13,6 +13,9 @@ import static edu.wpi.first.units.Units.MetersPerSecond;
 
 import com.ctre.phoenix.motorcontrol.TalonSRXControlMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
+import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.config.RobotConfig;
+import com.pathplanner.lib.controllers.PPLTVController;
 import com.revrobotics.AbsoluteEncoder;
 import com.revrobotics.REVLibError;
 import com.revrobotics.RelativeEncoder;
@@ -36,6 +39,7 @@ import edu.wpi.first.units.measure.MutLinearVelocity;
 import edu.wpi.first.units.measure.MutVoltage;
 import edu.wpi.first.util.sendable.SendableRegistry;
 import edu.wpi.first.wpilibj.ADXRS450_Gyro;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
@@ -51,13 +55,14 @@ public class DriveSubsystem extends SubsystemBase {
      public double direction = 1.0;
      public double speed_changer = 0.6;
 
-    public WPI_TalonSRX m_MotorRight = new WPI_TalonSRX(1);
+    WPI_TalonSRX m_MotorRight = new WPI_TalonSRX(1);
     WPI_TalonSRX m_MotorRightFollow = new WPI_TalonSRX(3);
-    WPI_TalonSRX m_MotorLeft = new WPI_TalonSRX(4);
-    WPI_TalonSRX m_MotorLeftFollow = new WPI_TalonSRX(2);
+    WPI_TalonSRX m_MotorLeftFollow = new WPI_TalonSRX(4);
+    WPI_TalonSRX m_MotorLeft = new WPI_TalonSRX(2);
 
     public AHRS gyro = new AHRS(NavXComType.kMXP_SPI);
 
+    
     private final DifferentialDrive m_drive =
     new DifferentialDrive(m_MotorRight::set, m_MotorLeft::set);
 
@@ -135,15 +140,27 @@ public DriveSubsystem() {
   m_MotorLeftFollow.follow(m_MotorLeft);
   m_MotorRightFollow.follow(m_MotorRight);
                                            
-  m_MotorRight.configVoltageCompSaturation(11.0);
+  /*m_MotorRight.configVoltageCompSaturation(11.0);
   m_MotorRightFollow.configVoltageCompSaturation(11.0);
   m_MotorLeft.configVoltageCompSaturation(11.0);
   m_MotorLeftFollow.configVoltageCompSaturation(11.0);
+
+  m_MotorRight.configContinuousCurrentLimit(40); // Limite continue de 40A
+  m_MotorRight.enableCurrentLimit(true); // Active la limitation
+
+  m_MotorRightFollow.configContinuousCurrentLimit(40); // Limite continue de 40A
+  m_MotorRightFollow.enableCurrentLimit(true); // Active la limitation
+
+  m_MotorLeft.configContinuousCurrentLimit(40); // Limite continue de 40A
+  m_MotorLeft.enableCurrentLimit(true); // Active la limitation
+
+  m_MotorLeftFollow.configContinuousCurrentLimit(40); // Limite continue de 40A
+  m_MotorLeftFollow.enableCurrentLimit(true); // Active la limitation
                                               
   m_MotorRight.setSafetyEnabled(true);
   m_MotorRightFollow.setSafetyEnabled(true);
   m_MotorLeft.setSafetyEnabled(true);
-  m_MotorLeftFollow.setSafetyEnabled(true);
+  m_MotorLeftFollow.setSafetyEnabled(true);*/
   
 
 
@@ -155,6 +172,36 @@ public DriveSubsystem() {
   m_odometry =
         new DifferentialDriveOdometry(
             gyro.getRotation2d(), encoderDriveL.getDistance(), encoderDriveR.getDistance());
+
+   RobotConfig config;
+    try{
+      config = RobotConfig.fromGUISettings();
+    } catch (Exception e) {
+      // Handle exception as needed
+      e.printStackTrace();
+    }
+
+    // Configure AutoBuilder last
+    AutoBuilder.configure(
+            this::getPose, // Robot pose supplier
+            this::resetPose, // Method to reset odometry (will be called if your auto has a starting pose)
+            this::getRobotRelativeSpeeds, // ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
+            (speeds, feedforwards) -> driveRobotRelative(speeds), // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds. Also optionally outputs individual module feedforwards
+            new PPLTVController(0.02), // PPLTVController is the built in path following controller for differential drive trains
+            config, // The robot configuration
+            () -> {
+              // Boolean supplier that controls when the path will be mirrored for the red alliance
+              // This will flip the path being followed to the red side of the field.
+              // THE ORIGIN WILL REMAIN ON THE BLUE SIDE
+
+              var alliance = DriverStation.getAlliance();
+              if (alliance.isPresent()) {
+                return alliance.get() == DriverStation.Alliance.Red;
+              }
+              return false;
+            },
+            this // Reference to this subsystem to set requirements
+    );
                                                                                           
 }
                                               
@@ -178,7 +225,7 @@ public DriveSubsystem() {
     public Command arcadeDriveCommand(DoubleSupplier fwd, DoubleSupplier rot) {
     // A split-stick arcade command, with forward/backward controlled by the left
     // hand, and turning controlled by the right.
-    return run(() -> m_drive.arcadeDrive(-fwd.getAsDouble(), -rot.getAsDouble()))
+    return run(() -> m_drive.arcadeDrive(-fwd.getAsDouble(), rot.getAsDouble()))
         .withName("arcadeDrive");
   }
 
