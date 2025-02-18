@@ -28,7 +28,8 @@ public class Robot extends TimedRobot {
     // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
     // autonomous chooser on the dashboard.
     m_robotContainer = new RobotContainer();
-    m_robotContainer.driveSubsystem.gyro.reset();
+    m_robotContainer.driveSubsystem.zeroHeading();
+    m_robotContainer.driveSubsystem.resetEncoders();
 
     SmartDashboard.putData(m_robotContainer.driveSubsystem.gyro);
   }
@@ -49,7 +50,10 @@ public class Robot extends TimedRobot {
 
     SmartDashboard.putNumber("Encoder Right",m_robotContainer.driveSubsystem.getRightDistance());
     SmartDashboard.putNumber("Encoder Left",m_robotContainer.driveSubsystem.getLeftDistance());
+    SmartDashboard.putNumber("Encoder R Rate",m_robotContainer.driveSubsystem.getRate());
     CommandScheduler.getInstance().run();
+
+    m_robotContainer.driveSubsystem.setFollowers();
   }
 
   /** This function is called once each time the robot enters Disabled mode. */
@@ -63,6 +67,8 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousInit() {
     m_autonomousCommand = m_robotContainer.getAutonomousCommand();
+    m_robotContainer.driveSubsystem.zeroHeading();
+    m_robotContainer.driveSubsystem.resetEncoders();
 
     // schedule the autonomous command (example)
     if (m_autonomousCommand != null) {
@@ -83,11 +89,15 @@ public class Robot extends TimedRobot {
     if (m_autonomousCommand != null) {
       m_autonomousCommand.cancel();
     }
+    m_robotContainer.driveSubsystem.zeroHeading();
+    m_robotContainer.driveSubsystem.resetEncoders();
   }
 
   /** This function is called periodically during operator control. */
   @Override
-  public void teleopPeriodic() {}
+  public void teleopPeriodic() {
+    m_robotContainer.driveSubsystem.setFollowers();
+  }
 
   @Override
   public void testInit() {
@@ -97,7 +107,9 @@ public class Robot extends TimedRobot {
 
   /** This function is called periodically during test mode. */
   @Override
-  public void testPeriodic() {}
+  public void testPeriodic() {
+
+  }
 
   /** This function is called once when the robot is first started up. */
   @Override

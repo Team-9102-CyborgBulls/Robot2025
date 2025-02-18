@@ -5,22 +5,16 @@
 package frc.robot;
 
 import frc.robot.Constants.OperatorConstants;
-//import frc.robot.commands.Autos;
+import frc.robot.commands.Auto1CoralL;
+import frc.robot.commands.Auto1CoralM;
+import frc.robot.commands.Auto1CoralR;
+
 import frc.robot.commands.DriveCmd;
+import frc.robot.commands.DriveForDistanceCmd;
+import frc.robot.commands.TurnToAngleCmd;
 import frc.robot.subsystems.DriveSubsystem;
-
-import java.util.List;
-
-import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.controller.RamseteController;
-import edu.wpi.first.math.controller.SimpleMotorFeedforward;
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.trajectory.Trajectory;
-import edu.wpi.first.math.trajectory.TrajectoryConfig;
-import edu.wpi.first.math.trajectory.TrajectoryGenerator;
-import edu.wpi.first.math.trajectory.constraint.DifferentialDriveVoltageConstraint;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -32,15 +26,37 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
-  final DriveSubsystem driveSubsystem = new DriveSubsystem();
+  public final static DriveSubsystem driveSubsystem = new DriveSubsystem();
   public final DriveCmd driveCmd = new DriveCmd(driveSubsystem);
   
   public static CommandXboxController manette = new CommandXboxController(0);
+
+  public SendableChooser<Command> m_Chooser = new SendableChooser<Command>();
+
+  public final DriveForDistanceCmd Drive1m = new DriveForDistanceCmd(1);
+  public final TurnToAngleCmd Turn90 = new TurnToAngleCmd(driveSubsystem,90);
+  public final Auto1CoralR auto1CoralR = new Auto1CoralR();
+  public final Auto1CoralM auto1CoralM = new Auto1CoralM();
+  public final Auto1CoralL auto1CoralL = new Auto1CoralL();
 
  
   public RobotContainer() {
     // Configure the trigger bindings
     configureBindings();
+
+    // Add commands to the autonomous command chooser
+    m_Chooser.setDefaultOption("Auto Test",Drive1m );
+    m_Chooser.addOption("Auto Turn", Turn90);
+    //m_Chooser.addOption("Auto Test2", autoTest);
+    m_Chooser.addOption("Auto R", auto1CoralR);
+    m_Chooser.addOption("Auto M", auto1CoralM);
+    m_Chooser.addOption("Auto L", auto1CoralL);
+    
+
+    //Put the chooser on the dashboard
+    SmartDashboard.putData(m_Chooser);
+
+
   }
 
   /**
@@ -105,58 +121,6 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     // Create a voltage constraint to ensure we don't accelerate too fast
-    var autoVoltageConstraint =
-        new DifferentialDriveVoltageConstraint(
-            new SimpleMotorFeedforward(
-                Constants.ksVolt,
-                Constants.kvVoltSecondsPerMeter,
-                Constants.kaVoltSecondsSquaredPerMeter),
-            Constants.kDriveKinematics,10);
-
-    // Create config for trajectory
-    TrajectoryConfig config =
-        new TrajectoryConfig(
-                Constants.kMaxSpeedMetersPerSecond,
-                Constants.kMaxAccelerationMetersPerSecondSquared)
-            // Add kinematics to ensure max speed is actually obeyed
-            .setKinematics(Constants.kDriveKinematics)
-            // Apply the voltage constraint
-            .addConstraint(autoVoltageConstraint);
-
-    // An example trajectory to follow. All units in meters.
-    Trajectory exampleTrajectory =
-        TrajectoryGenerator.generateTrajectory(
-            // Start at the origin facing the +X direction
-            new Pose2d(0, 0, new Rotation2d(0)),
-            // Pass through these two interior waypoints, making an 's' curve path
-            List.of(/*new Translation2d(1, 1), new Translation2d(2, -1)*/),
-            // End 3 meters straight ahead of where we started, facing forward
-            new Pose2d(3, 0, new Rotation2d(0)),
-            // Pass config
-            config);
-
-    RamseteCommand ramseteCommand =
-        new RamseteCommand(
-            exampleTrajectory,
-            driveSubsystem::getPose,
-            new RamseteController(Constants.kRamseteB, Constants.kRamseteZeta),
-            new SimpleMotorFeedforward(
-                Constants.ksVolt,
-                Constants.kvVoltSecondsPerMeter,
-                Constants.kaVoltSecondsSquaredPerMeter),
-            Constants.kDriveKinematics,
-            driveSubsystem::getWheelSpeeds,
-            new PIDController(Constants.kp, 0, 0),
-            new PIDController(Constants.kp, 0, 0),
-            // RamseteCommand passes volts to the callback
-            driveSubsystem::tankDriveVolts,
-            driveSubsystem);
-
-    // Reset odometry to the initial pose of the trajectory, run path following
-    // command, then stop at the end.
-    return Commands.runOnce(() -> driveSubsystem.resetOdometry(exampleTrajectory.getInitialPose()))
-        .andThen(ramseteCommand)
-        .andThen(Commands.runOnce(() -> driveSubsystem.tankDriveVolts(0, 0)));
-  }
+    return m_Chooser.getSelected();
 }
-
+}

@@ -35,7 +35,7 @@ public class DriveCmd extends Command {
   @Override
   public void execute() {
       SmartDashboard.putNumber("speed changer value", driveSubsystem.speed_changer); // Affichage de la valeur de speed_changer sur le SmartDashboard
-      SmartDashboard.putNumber("direction value", driveSubsystem.direction); // Affichage de la valeur de direction sur le SmartDashboard
+      //SmartDashboard.putNumber("direction value", driveSubsystem.direction); // Affichage de la valeur de direction sur le SmartDashboard
         
         double forwardSpeed = RobotContainer.manette.getLeftY(); // Récupération de la vitesse de déplacement vers l'avant
         double turnSpeed =  RobotContainer.manette.getRightX(); // Récupération de la vitesse de rotation

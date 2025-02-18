@@ -10,7 +10,9 @@ import java.util.function.DoubleSupplier;
 
 import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.MetersPerSecond;
+import static edu.wpi.first.units.Units.Seconds;
 
+import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.TalonSRXControlMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.pathplanner.lib.auto.AutoBuilder;
@@ -26,6 +28,7 @@ import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.SerialPort.Port;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
@@ -52,7 +55,7 @@ public class DriveSubsystem extends SubsystemBase {
   
      
      private DifferentialDriveOdometry m_odometry;
-     public double direction = 1.0;
+     //public double direction = 1.0;
      public double speed_changer = 0.6;
 
     WPI_TalonSRX m_MotorRight = new WPI_TalonSRX(1);
@@ -60,7 +63,7 @@ public class DriveSubsystem extends SubsystemBase {
     WPI_TalonSRX m_MotorLeftFollow = new WPI_TalonSRX(4);
     WPI_TalonSRX m_MotorLeft = new WPI_TalonSRX(2);
 
-    public AHRS gyro = new AHRS(NavXComType.kMXP_SPI);
+    public static AHRS gyro = new AHRS(NavXComType.kMXP_SPI);
 
     
     private final DifferentialDrive m_drive =
@@ -68,14 +71,8 @@ public class DriveSubsystem extends SubsystemBase {
 
     public static Encoder encoderDriveR = new Encoder(0,1, false);
     public static Encoder encoderDriveL = new Encoder(2,3,true);
-
-    private static double lastPositionR;
-    private static double lastPositionL;
-    private static double lastTime;
-            
-    static  int kEncoderCPR = 8192;
-    static double kWheelDiameterMeters = Units.inchesToMeters(6);
-    static double kEncoderDistancePerPulse = (kWheelDiameterMeters * Math.PI) / kEncoderCPR;
+             
+    
 
     
 
@@ -93,7 +90,7 @@ public class DriveSubsystem extends SubsystemBase {
     private final SysIdRoutine m_sysIdRoutine =
         new SysIdRoutine(
     // Empty config defaults to 1 volt/second ramp rate and 7 volt step voltage.
-            new SysIdRoutine.Config(),
+            new SysIdRoutine.Config(Volts.of(1).per(Seconds),Volts.of(7),null,null),
             new SysIdRoutine.Mechanism(
     // Tell SysId how to plumb the driving voltage to the motors.
             voltage -> {
@@ -140,6 +137,10 @@ public DriveSubsystem() {
   m_MotorLeftFollow.follow(m_MotorLeft);
   m_MotorRightFollow.follow(m_MotorRight);
                                            
+  m_MotorLeft.setNeutralMode(NeutralMode.Brake);
+  m_MotorLeftFollow.setNeutralMode(NeutralMode.Brake);
+  m_MotorRight.setNeutralMode(NeutralMode.Brake);
+  m_MotorRightFollow.setNeutralMode(NeutralMode.Brake);
   /*m_MotorRight.configVoltageCompSaturation(11.0);
   m_MotorRightFollow.configVoltageCompSaturation(11.0);
   m_MotorLeft.configVoltageCompSaturation(11.0);
@@ -164,8 +165,8 @@ public DriveSubsystem() {
   
 
 
-  encoderDriveL.setDistancePerPulse(kEncoderDistancePerPulse);
-  encoderDriveR.setDistancePerPulse(kEncoderDistancePerPulse);
+  encoderDriveL.setDistancePerPulse(Constants.DriveConstants.kEncoderDistancePerPulse);
+  encoderDriveR.setDistancePerPulse(Constants.DriveConstants.kEncoderDistancePerPulse);
   encoderDriveL.reset();
   encoderDriveR.reset();
   
@@ -182,7 +183,7 @@ public DriveSubsystem() {
     }
 
     // Configure AutoBuilder last
-    AutoBuilder.configure(
+    /*AutoBuilder.configure(
             this::getPose, // Robot pose supplier
             this::resetPose, // Method to reset odometry (will be called if your auto has a starting pose)
             this::getRobotRelativeSpeeds, // ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
@@ -201,7 +202,7 @@ public DriveSubsystem() {
               return false;
             },
             this // Reference to this subsystem to set requirements
-    );
+    );*/
                                                                                           
 }
                                               
@@ -228,6 +229,10 @@ public DriveSubsystem() {
     return run(() -> m_drive.arcadeDrive(-fwd.getAsDouble(), rot.getAsDouble()))
         .withName("arcadeDrive");
   }
+    public void setFollowers() {
+      m_MotorLeftFollow.follow(m_MotorLeft);
+      m_MotorRightFollow.follow(m_MotorRight);
+    }
 
     public void tankDrive(double left, double right){
       m_drive.tankDrive(left, right);
@@ -237,9 +242,9 @@ public DriveSubsystem() {
       m_drive.setMaxOutput(speed_changer);
     }
 
-    public void reverse(){
+    /*public void reverse(){
       direction = -direction;
-    }
+    }*/
 
     public void speedUp(){
       if(speed_changer <= 0.8){
@@ -286,13 +291,7 @@ public DriveSubsystem() {
    
    
     
-  @Override
-  public void periodic() {
-
-    m_odometry.update(
-      gyro.getRotation2d(), encoderDriveL.getDistance(), encoderDriveR.getDistance());
-
-  } // This method will be called once per scheduler run
+  
 
   public Pose2d getPose() {
     return m_odometry.getPoseMeters();
@@ -329,6 +328,7 @@ public DriveSubsystem() {
   public double getHeading() {
     return gyro.getRotation2d().getDegrees();
   }
+
 
   public double getTurnRate() {
     return -gyro.getRate();
@@ -376,7 +376,22 @@ public DriveSubsystem() {
   public void driveLeftFollow(double speed){
     m_MotorLeftFollow.set(speed);
     
+
   }
+
+  @Override
+  public void periodic() {
+
+    m_odometry.update(
+      gyro.getRotation2d(), encoderDriveL.getDistance(), encoderDriveR.getDistance());
+
+    SmartDashboard.putNumber("Left encoder value meters", encoderDriveL.getDistance());
+    SmartDashboard.putNumber("Right encoder value meters", encoderDriveR.getDistance());
+    SmartDashboard.putNumber("Gyro angle", gyro.getAngle());
+    SmartDashboard.putNumber("Rate L", encoderDriveL.getRate());
+    SmartDashboard.putNumber("Rate R", encoderDriveR.getRate());
+
+  } // This method will be called once per scheduler run
 
 
   

@@ -5,6 +5,7 @@
 package frc.robot;
 
 import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
+import edu.wpi.first.math.util.Units;
 
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide numerical or boolean
@@ -18,19 +19,27 @@ public final class Constants {
   public static class OperatorConstants {
     public static final int kDriverControllerPort = 0;
   }
+  public static class DriveConstants {
+    public static final double kvVoltSecondsPerMeter = 1.4977;
+    public static final double ksVolt = 11.332;
+    public static final double kaVoltSecondsSquaredPerMeter = 7.3102;
+    public static final double kp = 0.17843;
 
-  public static final double kvVoltSecondsPerMeter = 1.4977;
-  public static final double ksVolt = 11.332;
-  public static final double kaVoltSecondsSquaredPerMeter = 7.3102;
-  public static final double kp = 0.17843;
-  // Reasonable baseline values for a RAMSETE follower in units of meters and seconds
-  public static final double kRamseteB = 2;
-  public static final double kRamseteZeta = 0.7;
+    // Reasonable baseline values for a RAMSETE follower in units of meters and seconds
+    public static final double kRamseteB = 2;
+    public static final double kRamseteZeta = 0.7;
 
-  public static final double kTrackwidthMeters = 0.61;
-  public static final DifferentialDriveKinematics kDriveKinematics =
+    public static final double kTrackwidthMeters = 0.58;
+    public static final DifferentialDriveKinematics kDriveKinematics =
         new DifferentialDriveKinematics(kTrackwidthMeters);
 
     public static final double kMaxSpeedMetersPerSecond = 3.41;
     public static final double kMaxAccelerationMetersPerSecondSquared = 1.84;
+
+    public static  int kEncoderCPR = 2048;
+    public static double kWheelDiameterMeters = Units.inchesToMeters(6);
+    public static double kEncoderDistancePerPulse = (kWheelDiameterMeters * Math.PI) / kEncoderCPR;
+
+  }
+  
 }
