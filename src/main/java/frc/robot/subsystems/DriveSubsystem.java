@@ -6,7 +6,9 @@ package frc.robot.subsystems;
 
 import static edu.wpi.first.units.Units.Volts;
 
+import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
+import java.util.function.Supplier;
 
 import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.MetersPerSecond;
@@ -15,54 +17,63 @@ import static edu.wpi.first.units.Units.Seconds;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.TalonSRXControlMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
-import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.config.RobotConfig;
-import com.pathplanner.lib.controllers.PPLTVController;
-import com.revrobotics.AbsoluteEncoder;
-import com.revrobotics.REVLibError;
-import com.revrobotics.RelativeEncoder;
+
 import com.studica.frc.AHRS;
 import com.studica.frc.AHRS.NavXComType;
 
 import edu.wpi.first.wpilibj.RobotController;
-import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.SerialPort.Port;
+
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.DifferentialDriveOdometry;
 import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
-import edu.wpi.first.math.util.Units;
+
 import edu.wpi.first.units.measure.MutDistance;
 import edu.wpi.first.units.measure.MutLinearVelocity;
 import edu.wpi.first.units.measure.MutVoltage;
 import edu.wpi.first.util.sendable.SendableRegistry;
-import edu.wpi.first.wpilibj.ADXRS450_Gyro;
-import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.DutyCycleEncoder;
+import edu.wpi.first.math.controller.DifferentialDriveFeedforward;
+import edu.wpi.first.math.controller.DifferentialDriveWheelVoltages;
+import edu.wpi.first.math.estimator.DifferentialDrivePoseEstimator;
+import edu.wpi.first.math.kinematics.DifferentialDriveWheelPositions;
+
+import edu.wpi.first.wpilibj.simulation.DifferentialDrivetrainSim;
 import edu.wpi.first.wpilibj.Encoder;
-import edu.wpi.first.wpilibj.drive.DifferentialDrive;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
+
+
+import com.revrobotics.jni.CANSparkJNI;
+import com.revrobotics.spark.SparkBase.ResetMode;
+import com.revrobotics.spark.SparkMax;
+import com.revrobotics.spark.SparkBase.PersistMode;
+import com.revrobotics.spark.SparkLowLevel.MotorType;
+//import com.revrobotics.spark.config.SparkBaseConfig;
+import com.revrobotics.spark.config.SparkMaxConfig;
+import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
+
 import frc.robot.Constants;
-import edu.wpi.first.wpilibj.SerialPort;
+
 
  
 public class DriveSubsystem extends SubsystemBase {
   
      
      private DifferentialDriveOdometry m_odometry;
-     //public double direction = 1.0;
+     public double direction = 1.0;
      public double speed_changer = 0.6;
 
-    WPI_TalonSRX m_MotorRight = new WPI_TalonSRX(1);
-    WPI_TalonSRX m_MotorRightFollow = new WPI_TalonSRX(3);
-    WPI_TalonSRX m_MotorLeftFollow = new WPI_TalonSRX(4);
-    WPI_TalonSRX m_MotorLeft = new WPI_TalonSRX(2);
+    SparkMax m_MotorRight = new SparkMax(4, MotorType.kBrushed);
+    SparkMax m_MotorRightFollow = new SparkMax(3, MotorType.kBrushed);
+    SparkMax m_MotorLeft = new SparkMax(1, MotorType.kBrushed);
+    SparkMax m_MotorLeftFollow = new SparkMax(2, MotorType.kBrushed);
 
+    static SparkMaxConfig config = new SparkMaxConfig();
     public static AHRS gyro = new AHRS(NavXComType.kMXP_SPI);
 
     
@@ -125,44 +136,26 @@ public class DriveSubsystem extends SubsystemBase {
                                                   
 public DriveSubsystem() {
                                               
-                                                
-  m_MotorRight.setInverted(true);
-  m_MotorRightFollow.setInverted(true);
-  m_MotorLeft.setInverted(false);
-  m_MotorLeftFollow.setInverted(false);
+    
+  config.voltageCompensation(12);
+  config.smartCurrentLimit(40);
+  config.idleMode(IdleMode.kBrake);
+
+  config.follow(m_MotorRight);
+  m_MotorRightFollow.configure(config,ResetMode.kResetSafeParameters,PersistMode.kPersistParameters);
+
+  config.follow(m_MotorLeft);
+
+  m_MotorLeftFollow.configure(config,ResetMode.kResetSafeParameters,PersistMode.kPersistParameters);
+
+  config.disableFollowerMode();
+  m_MotorRight.configure(config,ResetMode.kResetSafeParameters,PersistMode.kPersistParameters);
+
+  config.inverted(true);
+  m_MotorLeft.configure(config,ResetMode.kResetSafeParameters,PersistMode.kPersistParameters);
                                             
   SendableRegistry.addChild(m_drive, m_MotorLeft);
   SendableRegistry.addChild(m_drive, m_MotorRight);
-
-  m_MotorLeftFollow.follow(m_MotorLeft);
-  m_MotorRightFollow.follow(m_MotorRight);
-                                           
-  m_MotorLeft.setNeutralMode(NeutralMode.Brake);
-  m_MotorLeftFollow.setNeutralMode(NeutralMode.Brake);
-  m_MotorRight.setNeutralMode(NeutralMode.Brake);
-  m_MotorRightFollow.setNeutralMode(NeutralMode.Brake);
-  /*m_MotorRight.configVoltageCompSaturation(11.0);
-  m_MotorRightFollow.configVoltageCompSaturation(11.0);
-  m_MotorLeft.configVoltageCompSaturation(11.0);
-  m_MotorLeftFollow.configVoltageCompSaturation(11.0);
-
-  m_MotorRight.configContinuousCurrentLimit(40); // Limite continue de 40A
-  m_MotorRight.enableCurrentLimit(true); // Active la limitation
-
-  m_MotorRightFollow.configContinuousCurrentLimit(40); // Limite continue de 40A
-  m_MotorRightFollow.enableCurrentLimit(true); // Active la limitation
-
-  m_MotorLeft.configContinuousCurrentLimit(40); // Limite continue de 40A
-  m_MotorLeft.enableCurrentLimit(true); // Active la limitation
-
-  m_MotorLeftFollow.configContinuousCurrentLimit(40); // Limite continue de 40A
-  m_MotorLeftFollow.enableCurrentLimit(true); // Active la limitation
-                                              
-  m_MotorRight.setSafetyEnabled(true);
-  m_MotorRightFollow.setSafetyEnabled(true);
-  m_MotorLeft.setSafetyEnabled(true);
-  m_MotorLeftFollow.setSafetyEnabled(true);*/
-  
 
 
   encoderDriveL.setDistancePerPulse(Constants.DriveConstants.kEncoderDistancePerPulse);
@@ -206,132 +199,85 @@ public DriveSubsystem() {
                                                                                           
 }
                                               
-  
+// SysID methods :
+
   public Command sysIdQuasistatic(SysIdRoutine.Direction direction) {
     return m_sysIdRoutine.quasistatic(direction);
   }
-
 
   public Command sysIdDynamic(SysIdRoutine.Direction direction) {
       return m_sysIdRoutine.dynamic(direction);
   }
 
-    /*public void arcadeDrive(double fwd, double rot) {
-      m_drive.arcadeDrive(fwd*direction, rot);
-      m_drive.setMaxOutput(speed_changer);
-       m_MotorRightFollow.follow(m_MotorRight);
-      m_MotorLeftFollow.follow(m_MotorLeft);
-    }*/
+//Drive methods :
+
+
+private void setVoltage(double volts) {
+  m_MotorLeft.setVoltage(volts);
+  m_MotorRight.setVoltage(volts);
+}
+
+//@Override
+public void drive(ChassisSpeeds speeds) {
+  DifferentialDriveWheelSpeeds wheelSpeeds = Constants.DriveConstants.kDriveKinematics.toWheelSpeeds(speeds);
+  wheelSpeeds.desaturate(Constants.DriveConstants.MAX_DRIVING_VELOCITY_METERS_PER_SECOND);
+
+  m_MotorLeft.setVoltage((wheelSpeeds.leftMetersPerSecond / Constants.DriveConstants.MAX_DRIVING_VELOCITY_METERS_PER_SECOND) * 12.0);
+  m_MotorRight.setVoltage((wheelSpeeds.rightMetersPerSecond / Constants.DriveConstants.MAX_DRIVING_VELOCITY_METERS_PER_SECOND) * 12.0);
+}
+
+
+
+
+  public void arcadeDrive(double fwd, double rot){
     
-    public Command arcadeDriveCommand(DoubleSupplier fwd, DoubleSupplier rot) {
-    // A split-stick arcade command, with forward/backward controlled by the left
-    // hand, and turning controlled by the right.
+    double previousSpeed = 0.0;
+    final double rampRate = 0.05; // Limite de variation par boucle (ajustable)
+
+    double targetSpeed = fwd;
+     // Appliquer la rampe d'accélération
+     if (targetSpeed > previousSpeed + rampRate) {
+      targetSpeed = previousSpeed + rampRate;
+  } else if (targetSpeed < previousSpeed - rampRate) {
+      targetSpeed = previousSpeed - rampRate;
+  }
+  previousSpeed = targetSpeed; // Mise à jour pour la prochaine itération*/
+
+  
+    m_drive.arcadeDrive(targetSpeed*direction, rot);
+    //m_drive.setMaxOutput(speed_changer);
+  }
+
+  public double getTargetSpeed(double fwd, double previousSpeed){
+
+    
+    final double rampRate = 0.05; // Limite de variation par boucle (ajustable)
+
+    double targetSpeed = fwd;
+     // Appliquer la rampe d'accélération
+     if (targetSpeed > previousSpeed + rampRate) {
+      targetSpeed = previousSpeed + rampRate;
+  } else if (targetSpeed < previousSpeed - rampRate) {
+      targetSpeed = previousSpeed - rampRate;
+  }
+  previousSpeed = targetSpeed; // Mise à jour pour la prochaine itération*/
+  return targetSpeed;
+  }
+  /*
+  public Command arcadeDriveCommand(DoubleSupplier fwd, DoubleSupplier rot) {
+    
     return run(() -> m_drive.arcadeDrive(-fwd.getAsDouble(), rot.getAsDouble()))
         .withName("arcadeDrive");
   }
-    public void setFollowers() {
-      m_MotorLeftFollow.follow(m_MotorLeft);
-      m_MotorRightFollow.follow(m_MotorRight);
-    }
-
-    public void tankDrive(double left, double right){
-      m_drive.tankDrive(left, right);
-    }
-
-    public void setMaxOutput(double speed_changer) {
-      m_drive.setMaxOutput(speed_changer);
-    }
-
-    /*public void reverse(){
-      direction = -direction;
-    }*/
-
-    public void speedUp(){
-      if(speed_changer <= 0.8){
-      speed_changer = speed_changer + 0.3;
-      }
-    }
-    public void speedDown(){
-      if(speed_changer >= 0.1){
-      speed_changer = speed_changer - 0.3;
-      }
-    }
-    public double getAngle(){
-      return gyro.getAngle();
-    }
-    public double getRate(){
-      return gyro.getRate();
-    }
-    public void resetGyro(){
-      gyro.reset();
-    } 
-    /*public void calibrateGyro(){
-      gyro.
-    }*/
-    public double getRightPosition(){
-      return encoderDriveR.get();
-    }
-    
-    public double getLeftPosition(){
-      return encoderDriveL.get();
-    }
-    
-    public double getRightDistance(){
-      return encoderDriveR.getDistance();
-    }
-    
-    public double getLeftDistance(){
-      return encoderDriveL.getDistance();
-    }
-    
-    public void resetEncoder() {
-      encoderDriveL.reset();
-      encoderDriveR.reset();
-    }
-   
-   
-    
+  */
+  public void tankDrive(double left, double right){
+    m_drive.tankDrive(left, right);
+  }
   
-
-  public Pose2d getPose() {
-    return m_odometry.getPoseMeters();
-  }
-
-  public DifferentialDriveWheelSpeeds getWheelSpeeds() {
-    return new DifferentialDriveWheelSpeeds(encoderDriveL.getRate(), encoderDriveR.getRate());
-  }
-
-  public void resetOdometry(Pose2d pose) {
-    m_odometry.resetPosition(
-        gyro.getRotation2d(), encoderDriveL.getDistance(), encoderDriveR.getDistance(), pose);
-  }
-
   public void tankDriveVolts(double leftVolts, double rightVolts) {
     m_MotorLeft.setVoltage(leftVolts);
     m_MotorRight.setVoltage(rightVolts);
     m_drive.feed();
-  }
-
-  public void resetEncoders() {
-    encoderDriveL.reset();
-    encoderDriveR.reset();
-  }
-
-  public double getAverageEncoderDistance() {
-    return (encoderDriveL.getDistance() + encoderDriveR.getDistance()) / 2.0;
-  }
-
-  public void zeroHeading() {
-    gyro.reset();
-  }
-
-  public double getHeading() {
-    return gyro.getRotation2d().getDegrees();
-  }
-
-
-  public double getTurnRate() {
-    return -gyro.getRate();
   }
 
   public void setDriveMotors(double forward, double turn){
@@ -339,11 +285,11 @@ public DriveSubsystem() {
     double left = forward - turn;
     double right = forward + turn;
 
-    m_MotorRight.set(TalonSRXControlMode.PercentOutput, right);
-    m_MotorLeft.set(TalonSRXControlMode.PercentOutput, left);
+    m_MotorRight.set(right);
+    m_MotorLeft.set(left);
 
-    m_MotorRightFollow.set(TalonSRXControlMode.PercentOutput, right);
-    m_MotorLeftFollow.set(TalonSRXControlMode.PercentOutput, left);
+    m_MotorRightFollow.set(right);
+    m_MotorLeftFollow.set(left);
   }
   public void stop(){
       m_MotorRight.set(0.0);
@@ -378,18 +324,116 @@ public DriveSubsystem() {
     
 
   }
+  
 
-  @Override
+  
+  /*public void setFollowers() {
+    m_MotorLeftFollow.follow(m_MotorLeft);
+    m_MotorRightFollow.follow(m_MotorRight);
+    }*/
+
+
+// Speed changer methods :
+
+    /*public void reverse(){
+      direction = -direction;
+    }*/
+
+    public void speedUp(){
+      if(speed_changer <= 0.8){
+      speed_changer = speed_changer + 0.3;
+      }
+    }
+    public void speedDown(){
+      if(speed_changer >= 0.1){
+      speed_changer = speed_changer - 0.3;
+      }
+    }
+
+    public void setMaxOutput(double speed_changer) {
+      m_drive.setMaxOutput(speed_changer);
+      }
+
+// Sensors methods :
+
+    public double getAngle(){
+      return gyro.getAngle();
+    }
+    public double getRate(){
+      return gyro.getRate();
+    }
+    public void resetGyro(){
+      gyro.reset();
+    } 
+    /*public void calibrateGyro(){
+      gyro.calibrate();
+    }*/
+
+    public void zeroHeading() {
+      gyro.reset();
+    }
+  
+    public double getHeading() {
+      return gyro.getRotation2d().getDegrees();
+    }
+  
+  
+    public double getTurnRate() {
+      return -gyro.getRate();
+    }
+
+    public double getRightPosition(){
+      return encoderDriveR.get();
+    }
+    
+    public double getLeftPosition(){
+      return encoderDriveL.get();
+    }
+    
+    public double getRightDistance(){
+      return encoderDriveR.getDistance();
+    }
+    
+    public double getLeftDistance(){
+      return encoderDriveL.getDistance();
+    }
+    
+    public void resetEncoders() {
+      encoderDriveL.reset();
+      encoderDriveR.reset();
+    }
+
+    public double getAverageEncoderDistance() {
+      return (encoderDriveL.getDistance() + encoderDriveR.getDistance()) / 2.0;
+    }
+  
+// Odometry methods :
+    
+   public Pose2d getPose() {
+    return m_odometry.getPoseMeters();
+  }
+
+  public DifferentialDriveWheelSpeeds getWheelSpeeds() {
+    return new DifferentialDriveWheelSpeeds(encoderDriveL.getRate(), encoderDriveR.getRate());
+  }
+
+  /*public void resetOdometry(Pose2d pose) {
+    m_odometry.resetPosition(
+        gyro.getRotation2d(), encoderDriveL.getDistance(), encoderDriveR.getDistance(), pose);
+  }*/
+
+  
+@Override
   public void periodic() {
 
-    m_odometry.update(
+    /*m_odometry.update(
       gyro.getRotation2d(), encoderDriveL.getDistance(), encoderDriveR.getDistance());
 
     SmartDashboard.putNumber("Left encoder value meters", encoderDriveL.getDistance());
     SmartDashboard.putNumber("Right encoder value meters", encoderDriveR.getDistance());
     SmartDashboard.putNumber("Gyro angle", gyro.getAngle());
     SmartDashboard.putNumber("Rate L", encoderDriveL.getRate());
-    SmartDashboard.putNumber("Rate R", encoderDriveR.getRate());
+    SmartDashboard.putNumber("Rate R", encoderDriveR.getRate());*/
 
   } // This method will be called once per scheduler run
 

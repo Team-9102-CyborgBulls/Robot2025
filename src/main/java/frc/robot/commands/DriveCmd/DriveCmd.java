@@ -2,14 +2,15 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.commands;
+package frc.robot.commands.DriveCmd;
 
 import frc.robot.RobotContainer;
 import frc.robot.subsystems.DriveSubsystem;
+import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 
-/** An example command that uses an example subsystem. */
+
 public class DriveCmd extends Command {
   @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
   private final DriveSubsystem driveSubsystem;
@@ -21,14 +22,14 @@ public class DriveCmd extends Command {
    */
   public DriveCmd(DriveSubsystem drivesubsystem) {
     this.driveSubsystem = drivesubsystem;
-    // Use addRequirements() here to declare subsystem dependencies.
+    
     addRequirements(drivesubsystem);
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    driveSubsystem.resetEncoder();
+    driveSubsystem.resetEncoders();
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -39,9 +40,15 @@ public class DriveCmd extends Command {
         
         double forwardSpeed = RobotContainer.manette.getLeftY(); // Récupération de la vitesse de déplacement vers l'avant
         double turnSpeed =  RobotContainer.manette.getRightX(); // Récupération de la vitesse de rotation
+
+        SlewRateLimiter speedLimiter = new SlewRateLimiter(2.0); // Limite de 2 unités par seconde
+        //double limiteSpeed = speedLimiter.calculate(forwardSpeed);
+        double targetSpeed = driveSubsystem.getTargetSpeed(forwardSpeed,0);
+
+        driveSubsystem.arcadeDrive(targetSpeed, turnSpeed); // Appel de la méthode arcadeDrive du sous-système driveSubsystem avec les vitesses calculées
         
-        //driveSubsystem.arcadeDrive(-forwardSpeed, -turnSpeed); // Appel de la méthode arcadeDrive du sous-système driveSubsystem avec les vitesses calculées
         
+
         if( forwardSpeed == 0 && turnSpeed == 0){ // Vérification si les vitesses sont nulles
             //driveSubsystem.arcadeDrive(0, 0); // Arrêt du mouvement si les vitesses sont nulles
         }

@@ -1,7 +1,9 @@
-package frc.robot.commands;
+package frc.robot.commands.AutoCmd;
 
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.RobotContainer;
+import frc.robot.commands.DriveCmd.DriveForDistanceCmd;
+import frc.robot.commands.DriveCmd.TurnToAngleCmd;
 
 public class Auto1CoralL extends SequentialCommandGroup{
     public Auto1CoralL(){

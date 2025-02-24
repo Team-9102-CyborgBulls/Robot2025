@@ -4,21 +4,26 @@
 
 package frc.robot;
 
-import frc.robot.Constants.OperatorConstants;
-import frc.robot.commands.Auto1CoralL;
-import frc.robot.commands.Auto1CoralM;
-import frc.robot.commands.Auto1CoralR;
 
-import frc.robot.commands.DriveCmd;
-import frc.robot.commands.DriveForDistanceCmd;
-import frc.robot.commands.TurnToAngleCmd;
+import frc.robot.commands.AutoCmd.Auto1CoralM;
+import frc.robot.commands.IntakeCmd;
+import frc.robot.commands.NothingCmd;
+import frc.robot.commands.OutTakeCmd;
+import frc.robot.commands.AutoCmd.Auto1CoralL;
+import frc.robot.commands.AutoCmd.Auto1CoralR;
+import frc.robot.commands.DriveCmd.DriveCmd;
+import frc.robot.commands.DriveCmd.DriveForDistanceCmd;
+import frc.robot.commands.DriveCmd.TurnToAngleCmd;
 import frc.robot.subsystems.DriveSubsystem;
+import frc.robot.subsystems.IntakeSubsystem;
+import frc.robot.subsystems.OutTakeSubsystem;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
+
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.RamseteCommand;
+
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
@@ -28,8 +33,15 @@ public class RobotContainer {
   // The robot's subsystems and commands are defined here...
   public final static DriveSubsystem driveSubsystem = new DriveSubsystem();
   public final DriveCmd driveCmd = new DriveCmd(driveSubsystem);
+
+  public final OutTakeSubsystem outTakeSubsystem = new OutTakeSubsystem();
+  public final OutTakeCmd outTakeCmd = new OutTakeCmd(outTakeSubsystem);
+
+  public final IntakeSubsystem intakeSubsystem = new IntakeSubsystem();
+  public final IntakeCmd intakeCmd = new IntakeCmd(intakeSubsystem);
   
   public static CommandXboxController manette = new CommandXboxController(0);
+  public static Timer m_timer = new Timer();
 
   public SendableChooser<Command> m_Chooser = new SendableChooser<Command>();
 
@@ -39,6 +51,7 @@ public class RobotContainer {
   public final Auto1CoralM auto1CoralM = new Auto1CoralM();
   public final Auto1CoralL auto1CoralL = new Auto1CoralL();
 
+  public final NothingCmd nothingCmd = new NothingCmd(driveSubsystem);
  
   public RobotContainer() {
     // Configure the trigger bindings
@@ -46,8 +59,8 @@ public class RobotContainer {
 
     // Add commands to the autonomous command chooser
     m_Chooser.setDefaultOption("Auto Test",Drive1m );
+
     m_Chooser.addOption("Auto Turn", Turn90);
-    //m_Chooser.addOption("Auto Test2", autoTest);
     m_Chooser.addOption("Auto R", auto1CoralR);
     m_Chooser.addOption("Auto M", auto1CoralM);
     m_Chooser.addOption("Auto L", auto1CoralL);
@@ -56,7 +69,7 @@ public class RobotContainer {
     //Put the chooser on the dashboard
     SmartDashboard.putData(m_Chooser);
 
-
+    
   }
 
   /**
@@ -81,12 +94,12 @@ public class RobotContainer {
     Trigger LeftButton = manette.povLeft();
     Trigger RightButton = manette.povRight();
     
-
-    driveSubsystem.setDefaultCommand(
+    driveSubsystem.setDefaultCommand(driveCmd);
+    /*driveSubsystem.setDefaultCommand(
         driveSubsystem.arcadeDriveCommand(
-            () -> manette.getLeftY(), () -> manette.getRightX()));
+            () -> manette.getLeftY(), () -> manette.getRightX()));*/
 
-    manette
+    /*manette
         .a()
         
         .whileTrue(driveSubsystem.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
@@ -101,16 +114,24 @@ public class RobotContainer {
     manette
         .y()
         
-        .whileTrue(driveSubsystem.sysIdDynamic(SysIdRoutine.Direction.kReverse));
+        .whileTrue(driveSubsystem.sysIdDynamic(SysIdRoutine.Direction.kReverse));*/
 
+    manette.a().whileTrue(new OutTakeCmd(outTakeSubsystem));
+    manette.b().whileTrue(new IntakeCmd(intakeSubsystem));
 
-    UpButton.whileTrue(new InstantCommand(()-> driveSubsystem.driveRight(0.5)));
-    DownButton.whileTrue(new InstantCommand(()-> driveSubsystem.driveRightFollow(0.3)));
-    LeftButton.whileTrue(new InstantCommand(()-> driveSubsystem.driveLeft(0.5)));
-    RightButton.whileTrue(new InstantCommand(()-> driveSubsystem.driveLeftFollow(0.3)));
+    UpButton.whileTrue(new InstantCommand(()-> driveSubsystem.driveRight(0.5))).whileFalse(new InstantCommand(()-> driveSubsystem.driveRight(0)));
+    DownButton.whileTrue(new InstantCommand(()-> driveSubsystem.driveRightFollow(0.3))).whileFalse(new InstantCommand(()-> driveSubsystem.driveRightFollow(0)));
+    LeftButton.whileTrue(new InstantCommand(()-> driveSubsystem.driveLeft(0.5))).whileFalse(new InstantCommand(()-> driveSubsystem.driveLeft(0)));
+    RightButton.whileTrue(new InstantCommand(()-> driveSubsystem.driveLeftFollow(0.3))).whileFalse(new InstantCommand(()-> driveSubsystem.driveLeftFollow(0)));
 
-    /*rBumper.onTrue(new InstantCommand(() -> driveSubsystem.speedUp())); // Vitesse augmenté
-    lBumper.onTrue(new InstantCommand(() -> driveSubsystem.speedDown())); // vitesse baissé*/
+    rBumper.onTrue(new InstantCommand(() -> driveSubsystem.speedUp())); // Vitesse augmenté
+    lBumper.onTrue(new InstantCommand(() -> driveSubsystem.speedDown())); // vitesse baissé
+
+    intakeSubsystem.setDefaultCommand(intakeSubsystem.ServoDefaultCmd(intakeSubsystem, 1));
+    // Schedule exampleMethodCommand when the Xbox controller's B button is pressed,
+    // cancelling on release.
+    
+  
   }
 
   /**

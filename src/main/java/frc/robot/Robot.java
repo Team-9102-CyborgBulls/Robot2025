@@ -8,7 +8,7 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import frc.robot.subsystems.DriveSubsystem;
+
 
 /**
  * The methods in this class are called automatically corresponding to each mode, as described in
@@ -25,8 +25,7 @@ public class Robot extends TimedRobot {
    * initialization code.
    */
   public Robot() {
-    // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
-    // autonomous chooser on the dashboard.
+    
     m_robotContainer = new RobotContainer();
     m_robotContainer.driveSubsystem.zeroHeading();
     m_robotContainer.driveSubsystem.resetEncoders();
@@ -51,19 +50,13 @@ public class Robot extends TimedRobot {
     SmartDashboard.putNumber("Encoder Right",m_robotContainer.driveSubsystem.getRightDistance());
     SmartDashboard.putNumber("Encoder Left",m_robotContainer.driveSubsystem.getLeftDistance());
     SmartDashboard.putNumber("Encoder R Rate",m_robotContainer.driveSubsystem.getRate());
+    SmartDashboard.putNumber("TargetSpeed",m_robotContainer.driveSubsystem.getTargetSpeed(m_robotContainer.manette.getLeftY(),0));
     CommandScheduler.getInstance().run();
 
-    m_robotContainer.driveSubsystem.setFollowers();
+    //m_robotContainer.driveSubsystem.setFollowers();
   }
 
-  /** This function is called once each time the robot enters Disabled mode. */
-  @Override
-  public void disabledInit() {}
-
-  @Override
-  public void disabledPeriodic() {}
-
-  /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
+  
   @Override
   public void autonomousInit() {
     m_autonomousCommand = m_robotContainer.getAutonomousCommand();
@@ -96,26 +89,8 @@ public class Robot extends TimedRobot {
   /** This function is called periodically during operator control. */
   @Override
   public void teleopPeriodic() {
-    m_robotContainer.driveSubsystem.setFollowers();
+   // m_robotContainer.driveSubsystem.setFollowers();
   }
 
-  @Override
-  public void testInit() {
-    // Cancels all running commands at the start of test mode.
-    CommandScheduler.getInstance().cancelAll();
-  }
-
-  /** This function is called periodically during test mode. */
-  @Override
-  public void testPeriodic() {
-
-  }
-
-  /** This function is called once when the robot is first started up. */
-  @Override
-  public void simulationInit() {}
-
-  /** This function is called periodically whilst in simulation. */
-  @Override
-  public void simulationPeriodic() {}
+ 
 }

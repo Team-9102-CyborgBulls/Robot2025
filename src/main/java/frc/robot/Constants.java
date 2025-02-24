@@ -20,10 +20,21 @@ public final class Constants {
     public static final int kDriverControllerPort = 0;
   }
   public static class DriveConstants {
+
+    public static final boolean kRightInverted = true;
+    public static final boolean kLeftInverted = false;
+     
     public static final double kvVoltSecondsPerMeter = 1.4977;
     public static final double ksVolt = 11.332;
     public static final double kaVoltSecondsSquaredPerMeter = 7.3102;
     public static final double kp = 0.17843;
+
+    public static final double MAX_DRIVING_VELOCITY_METERS_PER_SECOND = 5;
+        public static final double MAX_DRIVING_ACCELERATION_METERS_PER_SECOND_SQUARED = 8;
+        public static final double MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND = 20;
+        public static final double MAX_ANGULAR_ACCELERATION_RADIANS_PER_SECOND_SQUARED = 40;
+      
+    
 
     // Reasonable baseline values for a RAMSETE follower in units of meters and seconds
     public static final double kRamseteB = 2;
@@ -41,5 +52,13 @@ public final class Constants {
     public static double kEncoderDistancePerPulse = (kWheelDiameterMeters * Math.PI) / kEncoderCPR;
 
   }
+
+  public static final class Controls {
+    public static final double JOYSTICK_INPUT_RATE_LIMIT = 15.0;
+    public static final double JOYSTICK_INPUT_DEADBAND = 0.1;
+    public static final double JOYSTICK_CURVE_EXP = 2;
+    public static final double JOYSTICK_ROT_CURVE_EXP = 3;
+    public static final double JOYSTICK_ROT_LIMIT = 0.8;
+}
   
 }
