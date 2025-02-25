@@ -4,19 +4,21 @@ import org.photonvision.PhotonUtils;
 import org.photonvision.targeting.PhotonPipelineResult;
 
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import frc.robot.RobotContainer;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.VisionSubsystem;
 
+//faut changer mais c'est une base
 public class GettingInRangeCmd extends Command {
       // Vision-alignment mode
         // Query the latest result from PhotonVision
     
     DriveSubsystem driveSubsystem;
     VisionSubsystem visionSubsystem;
-    double range;
+    public double range;
   
     public GettingInRangeCmd(DriveSubsystem drivesubsystem, VisionSubsystem visionSubsystem){
 
@@ -63,6 +65,9 @@ public class GettingInRangeCmd extends Command {
     
         driveSubsystem.arcadeDrive(forwardSpeed, 0);
     
+    SmartDashboard.putNumber("range",range);
+    SmartDashboard.putNumber("fdspeed", forwardSpeed);
+
   }
 
   @Override

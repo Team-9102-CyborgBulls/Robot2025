@@ -11,14 +11,14 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 public class VisionSubsystem extends SubsystemBase { // Déclaration de la classe VisionSubsystem qui étend la classe SubsystemBase
 
     // Constantes telles que la hauteur de la caméra et de la cible stockées. À changer selon le robot et l'objectif !
-    public static final double CAMERA_HEIGHT_METERS = Units.inchesToMeters(24);
-    public static final double TARGET_HEIGHT_METERS = Units.feetToMeters(5);
+    public static final double CAMERA_HEIGHT_METERS = 0.032;
+    public static final double TARGET_HEIGHT_METERS = 0.017;
     
     // Angle entre l'horizontal et la caméra.
     public static final double CAMERA_PITCH_RADIANS = Units.degreesToRadians(0);
     
     // Distance souhaitée par rapport à la cible
-    public static final double GOAL_RANGE_METERS = Units.feetToMeters(3);
+    public static final double GOAL_RANGE_METERS = 1;
     
     // Changer ceci pour correspondre au nom de votre caméra
     public PhotonCamera camera = new PhotonCamera("photonvision");
@@ -34,6 +34,8 @@ public class VisionSubsystem extends SubsystemBase { // Déclaration de la class
     public VisionSubsystem() {} // Constructeur de la classe VisionSubsystem
 
     @Override
-    public void periodic() {} // Cette méthode sera appelée une fois par exécution du planificateur
+    public void periodic() {
+        
+    } // Cette méthode sera appelée une fois par exécution du planificateur
 
 }

@@ -6,6 +6,7 @@ package frc.robot;
 
 
 import frc.robot.commands.AutoCmd.Auto1CoralM;
+import frc.robot.commands.GettingInRangeCmd;
 import frc.robot.commands.IntakeCmd;
 import frc.robot.commands.NothingCmd;
 import frc.robot.commands.OutTakeCmd;
@@ -17,6 +18,7 @@ import frc.robot.commands.DriveCmd.TurnToAngleCmd;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.OutTakeSubsystem;
+import frc.robot.subsystems.VisionSubsystem;
 
 import java.util.function.DoubleSupplier;
 
@@ -36,6 +38,9 @@ public class RobotContainer {
   // The robot's subsystems and commands are defined here...
   public final static DriveSubsystem driveSubsystem = new DriveSubsystem();
   public final DriveCmd driveCmd = new DriveCmd(driveSubsystem);
+
+  public final static VisionSubsystem visionsubsystem = new VisionSubsystem();
+  public final GettingInRangeCmd gettinginrange = new GettingInRangeCmd(driveSubsystem, visionsubsystem);
 
   public final OutTakeSubsystem outTakeSubsystem = new OutTakeSubsystem();
   public final OutTakeCmd outTakeCmd = new OutTakeCmd(outTakeSubsystem);
@@ -96,12 +101,14 @@ public class RobotContainer {
     Trigger DownButton = manette.povDown();
     Trigger LeftButton = manette.povLeft();
     Trigger RightButton = manette.povRight();
+
+    Trigger startButton = manette.start();
     
     DoubleSupplier leftY = () -> manette.getLeftY();
       DoubleSupplier rightX = () -> manette.getRightX();
      
     driveSubsystem.setDefaultCommand(new InstantCommand(() -> 
-      driveSubsystem.teleopDriveCommand(leftY, rightX)
+      driveSubsystem.teleopDriveCommand(leftY, rightX),driveSubsystem
   ));
     /*driveSubsystem.setDefaultCommand(
         driveSubsystem.arcadeDriveCommand(
@@ -131,6 +138,8 @@ public class RobotContainer {
     DownButton.whileTrue(new InstantCommand(()-> driveSubsystem.driveRightFollow(0.3))).whileFalse(new InstantCommand(()-> driveSubsystem.driveRightFollow(0)));
     LeftButton.whileTrue(new InstantCommand(()-> driveSubsystem.driveLeft(0.5))).whileFalse(new InstantCommand(()-> driveSubsystem.driveLeft(0)));
     RightButton.whileTrue(new InstantCommand(()-> driveSubsystem.driveLeftFollow(0.3))).whileFalse(new InstantCommand(()-> driveSubsystem.driveLeftFollow(0)));
+
+    startButton.whileTrue(new GettingInRangeCmd(driveSubsystem,visionsubsystem));
 
     rBumper.onTrue(new InstantCommand(() -> driveSubsystem.speedUp())); // Vitesse augmenté
     lBumper.onTrue(new InstantCommand(() -> driveSubsystem.speedDown())); // vitesse baissé
