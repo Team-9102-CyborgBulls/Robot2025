@@ -17,6 +17,9 @@ import frc.robot.commands.DriveCmd.TurnToAngleCmd;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.OutTakeSubsystem;
+
+import java.util.function.DoubleSupplier;
+
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -94,7 +97,12 @@ public class RobotContainer {
     Trigger LeftButton = manette.povLeft();
     Trigger RightButton = manette.povRight();
     
-    driveSubsystem.setDefaultCommand(driveCmd);
+    DoubleSupplier leftY = () -> manette.getLeftY();
+      DoubleSupplier rightX = () -> manette.getRightX();
+     
+    driveSubsystem.setDefaultCommand(new InstantCommand(() -> 
+      driveSubsystem.teleopDriveCommand(leftY, rightX)
+  ));
     /*driveSubsystem.setDefaultCommand(
         driveSubsystem.arcadeDriveCommand(
             () -> manette.getLeftY(), () -> manette.getRightX()));*/
@@ -117,7 +125,7 @@ public class RobotContainer {
         .whileTrue(driveSubsystem.sysIdDynamic(SysIdRoutine.Direction.kReverse));*/
 
     manette.a().whileTrue(new OutTakeCmd(outTakeSubsystem));
-    manette.b().whileTrue(new IntakeCmd(intakeSubsystem));
+    manette.b().onTrue(new IntakeCmd(intakeSubsystem));
 
     UpButton.whileTrue(new InstantCommand(()-> driveSubsystem.driveRight(0.5))).whileFalse(new InstantCommand(()-> driveSubsystem.driveRight(0)));
     DownButton.whileTrue(new InstantCommand(()-> driveSubsystem.driveRightFollow(0.3))).whileFalse(new InstantCommand(()-> driveSubsystem.driveRightFollow(0)));
@@ -127,7 +135,7 @@ public class RobotContainer {
     rBumper.onTrue(new InstantCommand(() -> driveSubsystem.speedUp())); // Vitesse augmenté
     lBumper.onTrue(new InstantCommand(() -> driveSubsystem.speedDown())); // vitesse baissé
 
-    intakeSubsystem.setDefaultCommand(intakeSubsystem.ServoDefaultCmd(intakeSubsystem, 1));
+    //intakeSubsystem.setDefaultCommand(intakeSubsystem.ServoDefaultCmd(intakeSubsystem, 1));
     // Schedule exampleMethodCommand when the Xbox controller's B button is pressed,
     // cancelling on release.
     

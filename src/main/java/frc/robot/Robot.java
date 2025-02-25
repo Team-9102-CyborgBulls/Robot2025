@@ -50,7 +50,7 @@ public class Robot extends TimedRobot {
     SmartDashboard.putNumber("Encoder Right",m_robotContainer.driveSubsystem.getRightDistance());
     SmartDashboard.putNumber("Encoder Left",m_robotContainer.driveSubsystem.getLeftDistance());
     SmartDashboard.putNumber("Encoder R Rate",m_robotContainer.driveSubsystem.getRate());
-    SmartDashboard.putNumber("TargetSpeed",m_robotContainer.driveSubsystem.getTargetSpeed(m_robotContainer.manette.getLeftY(),0));
+    //SmartDashboard.putNumber("TargetSpeed",m_robotContainer.driveSubsystem.getTargetSpeed(m_robotContainer.manette.getLeftY(),0));
     CommandScheduler.getInstance().run();
 
     //m_robotContainer.driveSubsystem.setFollowers();

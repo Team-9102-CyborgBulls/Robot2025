@@ -36,22 +36,29 @@ public class DriveCmd extends Command {
   @Override
   public void execute() {
       SmartDashboard.putNumber("speed changer value", driveSubsystem.speed_changer); // Affichage de la valeur de speed_changer sur le SmartDashboard
+
+     
       //SmartDashboard.putNumber("direction value", driveSubsystem.direction); // Affichage de la valeur de direction sur le SmartDashboard
         
         double forwardSpeed = RobotContainer.manette.getLeftY(); // Récupération de la vitesse de déplacement vers l'avant
         double turnSpeed =  RobotContainer.manette.getRightX(); // Récupération de la vitesse de rotation
 
-        SlewRateLimiter speedLimiter = new SlewRateLimiter(2.0); // Limite de 2 unités par seconde
-        //double limiteSpeed = speedLimiter.calculate(forwardSpeed);
-        double targetSpeed = driveSubsystem.getTargetSpeed(forwardSpeed,0);
+        SlewRateLimiter speedLimiter = new SlewRateLimiter(50); // Limite de 2 unités par seconde
+        double limiteSpeed = speedLimiter.calculate(forwardSpeed);
+        //double targetSpeed = driveSubsystem.getTargetSpeed(forwardSpeed,0);
 
-        driveSubsystem.arcadeDrive(targetSpeed, turnSpeed); // Appel de la méthode arcadeDrive du sous-système driveSubsystem avec les vitesses calculées
+        
+
+        driveSubsystem.arcadeDrive(limiteSpeed, turnSpeed); // Appel de la méthode arcadeDrive du sous-système driveSubsystem avec les vitesses calculées
         
         
 
         if( forwardSpeed == 0 && turnSpeed == 0){ // Vérification si les vitesses sont nulles
             //driveSubsystem.arcadeDrive(0, 0); // Arrêt du mouvement si les vitesses sont nulles
         }
+
+        SmartDashboard.putNumber("ForwardSpeed", forwardSpeed);
+        SmartDashboard.putNumber("LimiteSpeed", limiteSpeed);
   }
 
   // Called once the command ends or is interrupted.

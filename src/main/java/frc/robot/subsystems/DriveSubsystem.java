@@ -226,12 +226,45 @@ public void drive(ChassisSpeeds speeds) {
   m_MotorRight.setVoltage((wheelSpeeds.rightMetersPerSecond / Constants.DriveConstants.MAX_DRIVING_VELOCITY_METERS_PER_SECOND) * 12.0);
 }
 
+public Command teleopDriveCommand(DoubleSupplier leftStickThrustSupplier,
+            DoubleSupplier rightStickRotationSupplier) {
+            
+        SlewRateLimiter leftThrustLimiter = new SlewRateLimiter(Constants.Controls.JOYSTICK_INPUT_RATE_LIMIT);
+        SlewRateLimiter rightThrustLimiter = new SlewRateLimiter(Constants.Controls.JOYSTICK_INPUT_RATE_LIMIT);
+        SlewRateLimiter rotationLimiter = new SlewRateLimiter(Constants.Controls.JOYSTICK_INPUT_RATE_LIMIT);
+
+        return run(() -> {
+            double leftThrust = leftStickThrustSupplier.getAsDouble();
+            //double rightThrust = rightStickThrustSupplier.getAsDouble();
+            double rightRotation = rightStickRotationSupplier.getAsDouble();
+            rightRotation *= Constants.Controls.JOYSTICK_ROT_LIMIT;
+            
+
+            leftThrust = Math.copySign(Math.pow(leftThrust, Constants.Controls.JOYSTICK_CURVE_EXP), leftThrust);
+            //rightThrust = Math.copySign(Math.pow(rightThrust, Constants.Controls.JOYSTICK_CURVE_EXP), rightThrust);
+            rightRotation = Math.copySign(Math.pow(rightRotation, Constants.Controls.JOYSTICK_ROT_CURVE_EXP), rightRotation);
+
+            leftThrust = leftThrustLimiter.calculate(leftThrust);
+            //rightThrust = rightThrustLimiter.calculate(rightThrust);
+            rightRotation = rotationLimiter.calculate(rightRotation);
+
+            
+                
+                    leftThrust *= Constants.DriveConstants.MAX_DRIVING_VELOCITY_METERS_PER_SECOND;
+                    //rightThrust *= Constants.DriveConstants.MAX_DRIVING_VELOCITY_METERS_PER_SECOND;
+                    rightRotation *= Constants.DriveConstants.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND;
+
+                    drive(new ChassisSpeeds(leftThrust, 0, rightRotation));
+                
+        }).withName("drivetrain.teleopDrive");
+      }
+
 
 
 
   public void arcadeDrive(double fwd, double rot){
     
-    double previousSpeed = 0.0;
+    /*double previousSpeed = 0.0;
     final double rampRate = 0.05; // Limite de variation par boucle (ajustable)
 
     double targetSpeed = fwd;
@@ -244,14 +277,14 @@ public void drive(ChassisSpeeds speeds) {
   previousSpeed = targetSpeed; // Mise à jour pour la prochaine itération*/
 
   
-    m_drive.arcadeDrive(targetSpeed*direction, rot);
+    m_drive.arcadeDrive(fwd*direction, rot);
     //m_drive.setMaxOutput(speed_changer);
   }
 
-  public double getTargetSpeed(double fwd, double previousSpeed){
+  //public double getTargetSpeed(double fwd, double previousSpeed){
 
     
-    final double rampRate = 0.05; // Limite de variation par boucle (ajustable)
+    /*final double rampRate = 0.05; // Limite de variation par boucle (ajustable)
 
     double targetSpeed = fwd;
      // Appliquer la rampe d'accélération
@@ -261,8 +294,8 @@ public void drive(ChassisSpeeds speeds) {
       targetSpeed = previousSpeed - rampRate;
   }
   previousSpeed = targetSpeed; // Mise à jour pour la prochaine itération*/
-  return targetSpeed;
-  }
+  //return targetSpeed;
+  //}*/
   /*
   public Command arcadeDriveCommand(DoubleSupplier fwd, DoubleSupplier rot) {
     
