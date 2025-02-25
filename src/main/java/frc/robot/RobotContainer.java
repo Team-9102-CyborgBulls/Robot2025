@@ -6,7 +6,6 @@ package frc.robot;
 
 
 import frc.robot.commands.AutoCmd.Auto1CoralM;
-import frc.robot.commands.IntakeCmd;
 import frc.robot.commands.NothingCmd;
 import frc.robot.commands.OutTakeCmd;
 import frc.robot.commands.AutoCmd.Auto1CoralL;
@@ -14,7 +13,13 @@ import frc.robot.commands.AutoCmd.Auto1CoralR;
 import frc.robot.commands.DriveCmd.DriveCmd;
 import frc.robot.commands.DriveCmd.DriveForDistanceCmd;
 import frc.robot.commands.DriveCmd.TurnToAngleCmd;
+import frc.robot.commands.ElevatorCmd.ElevatorDownCmd;
+import frc.robot.commands.ElevatorCmd.ElevatorStillCmd;
+import frc.robot.commands.ElevatorCmd.ElevatorUpCmd;
+import frc.robot.commands.IntakeCmd.IntakeDownCmd;
+import frc.robot.commands.IntakeCmd.IntakeUpCmd;
 import frc.robot.subsystems.DriveSubsystem;
+import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.OutTakeSubsystem;
 
@@ -41,7 +46,13 @@ public class RobotContainer {
   public final OutTakeCmd outTakeCmd = new OutTakeCmd(outTakeSubsystem);
 
   public final IntakeSubsystem intakeSubsystem = new IntakeSubsystem();
-  public final IntakeCmd intakeCmd = new IntakeCmd(intakeSubsystem);
+  public final IntakeUpCmd intakeUpCmd = new IntakeUpCmd(intakeSubsystem);
+  public final IntakeDownCmd intakeDownCmd = new IntakeDownCmd(intakeSubsystem);
+
+  public final ElevatorSubsystem elevatorSubsystem = new ElevatorSubsystem();
+  public final ElevatorDownCmd elevatorDownCmd = new ElevatorDownCmd(elevatorSubsystem);
+  public final ElevatorStillCmd elevatorStillCmd = new ElevatorStillCmd(elevatorSubsystem);
+  public final ElevatorUpCmd elevatorUpCmd = new ElevatorUpCmd(elevatorSubsystem);
   
   public static CommandXboxController manette = new CommandXboxController(0);
   public static Timer m_timer = new Timer();
@@ -97,15 +108,15 @@ public class RobotContainer {
     Trigger LeftButton = manette.povLeft();
     Trigger RightButton = manette.povRight();
     
-    DoubleSupplier leftY = () -> manette.getLeftY();
-      DoubleSupplier rightX = () -> manette.getRightX();
+    
      
-    driveSubsystem.setDefaultCommand(new InstantCommand(() -> 
-      driveSubsystem.teleopDriveCommand(leftY, rightX)
-  ));
-    /*driveSubsystem.setDefaultCommand(
-        driveSubsystem.arcadeDriveCommand(
-            () -> manette.getLeftY(), () -> manette.getRightX()));*/
+    /*driveSubsystem.setDefaultCommand(new InstantCommand(() -> 
+      driveSubsystem.teleopDriveCommand(() -> manette.getLeftY(),() -> manette.getRightX()), driveSubsystem)
+  );*/
+    driveSubsystem.setDefaultCommand(driveCmd);
+
+    elevatorSubsystem.setDefaultCommand(elevatorStillCmd);
+        
 
     /*manette
         .a()
@@ -125,12 +136,18 @@ public class RobotContainer {
         .whileTrue(driveSubsystem.sysIdDynamic(SysIdRoutine.Direction.kReverse));*/
 
     manette.a().whileTrue(new OutTakeCmd(outTakeSubsystem));
-    manette.b().onTrue(new IntakeCmd(intakeSubsystem));
+    //manette.b().onTrue(new IntakeUpCmd(intakeSubsystem));
 
-    UpButton.whileTrue(new InstantCommand(()-> driveSubsystem.driveRight(0.5))).whileFalse(new InstantCommand(()-> driveSubsystem.driveRight(0)));
-    DownButton.whileTrue(new InstantCommand(()-> driveSubsystem.driveRightFollow(0.3))).whileFalse(new InstantCommand(()-> driveSubsystem.driveRightFollow(0)));
-    LeftButton.whileTrue(new InstantCommand(()-> driveSubsystem.driveLeft(0.5))).whileFalse(new InstantCommand(()-> driveSubsystem.driveLeft(0)));
-    RightButton.whileTrue(new InstantCommand(()-> driveSubsystem.driveLeftFollow(0.3))).whileFalse(new InstantCommand(()-> driveSubsystem.driveLeftFollow(0)));
+    //UpButton.whileTrue(new InstantCommand(()-> driveSubsystem.driveRight(0.5))).whileFalse(new InstantCommand(()-> driveSubsystem.driveRight(0)));
+    //DownButton.whileTrue(new InstantCommand(()-> driveSubsystem.driveRightFollow(0.3))).whileFalse(new InstantCommand(()-> driveSubsystem.driveRightFollow(0)));
+
+    UpButton.whileTrue(new ElevatorUpCmd(elevatorSubsystem));
+    DownButton.whileTrue(new ElevatorDownCmd(elevatorSubsystem));
+
+    LeftButton.whileTrue(new IntakeUpCmd(intakeSubsystem));
+    RightButton.whileTrue(new IntakeDownCmd(intakeSubsystem));
+    //LeftButton.whileTrue(new InstantCommand(()-> driveSubsystem.driveLeft(0.5))).whileFalse(new InstantCommand(()-> driveSubsystem.driveLeft(0)));
+    //RightButton.whileTrue(new InstantCommand(()-> driveSubsystem.driveLeftFollow(0.3))).whileFalse(new InstantCommand(()-> driveSubsystem.driveLeftFollow(0)));
 
     rBumper.onTrue(new InstantCommand(() -> driveSubsystem.speedUp())); // Vitesse augmenté
     lBumper.onTrue(new InstantCommand(() -> driveSubsystem.speedDown())); // vitesse baissé

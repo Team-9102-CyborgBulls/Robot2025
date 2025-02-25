@@ -1,17 +1,16 @@
-package frc.robot.commands;
+package frc.robot.commands.IntakeCmd;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.RobotContainer;
-import frc.robot.subsystems.OutTakeSubsystem;
+import frc.robot.subsystems.IntakeSubsystem;
 
-public class OutTakeCmd extends Command {
-    
-    OutTakeSubsystem m_outTake;
+public class IntakeDownCmd extends Command {
+    IntakeSubsystem m_intake;
 
-    public OutTakeCmd(OutTakeSubsystem outTake){
+    public IntakeDownCmd(IntakeSubsystem intake){
 
-      this.m_outTake = outTake;
-      addRequirements(m_outTake);
+      this.m_intake = intake;
+      addRequirements(m_intake);
     }
 
     @Override
@@ -24,7 +23,7 @@ public class OutTakeCmd extends Command {
 
   @Override
   public void execute() {
-    m_outTake.setOutTakeMotor(-0.3);
+    m_intake.setIntakeZero();
   }
 
   @Override
@@ -39,6 +38,6 @@ public class OutTakeCmd extends Command {
 
   @Override
   public void end(boolean interrupted){
-    m_outTake.stop();
+    m_intake.setIntakeZero();
   }
 }

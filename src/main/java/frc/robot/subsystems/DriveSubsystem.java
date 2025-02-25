@@ -139,7 +139,7 @@ public DriveSubsystem() {
     
   config.voltageCompensation(12);
   config.smartCurrentLimit(40);
-  config.idleMode(IdleMode.kBrake);
+  config.idleMode(IdleMode.kCoast);
 
   config.follow(m_MotorRight);
   m_MotorRightFollow.configure(config,ResetMode.kResetSafeParameters,PersistMode.kPersistParameters);

@@ -14,6 +14,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 public class DriveCmd extends Command {
   @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
   private final DriveSubsystem driveSubsystem;
+  SlewRateLimiter speedLimiter = new SlewRateLimiter(2); // Limite de 2 unités par seconde
 
   /**
    * Creates a new ExampleCommand.
@@ -30,6 +31,8 @@ public class DriveCmd extends Command {
   @Override
   public void initialize() {
     driveSubsystem.resetEncoders();
+
+   
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -43,13 +46,13 @@ public class DriveCmd extends Command {
         double forwardSpeed = RobotContainer.manette.getLeftY(); // Récupération de la vitesse de déplacement vers l'avant
         double turnSpeed =  RobotContainer.manette.getRightX(); // Récupération de la vitesse de rotation
 
-        SlewRateLimiter speedLimiter = new SlewRateLimiter(50); // Limite de 2 unités par seconde
+       
         double limiteSpeed = speedLimiter.calculate(forwardSpeed);
         //double targetSpeed = driveSubsystem.getTargetSpeed(forwardSpeed,0);
 
         
 
-        driveSubsystem.arcadeDrive(limiteSpeed, turnSpeed); // Appel de la méthode arcadeDrive du sous-système driveSubsystem avec les vitesses calculées
+        driveSubsystem.arcadeDrive(-limiteSpeed, turnSpeed); // Appel de la méthode arcadeDrive du sous-système driveSubsystem avec les vitesses calculées
         
         
 

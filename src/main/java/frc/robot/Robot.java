@@ -4,6 +4,8 @@
 
 package frc.robot;
 
+import java.util.function.DoubleSupplier;
+
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -50,9 +52,13 @@ public class Robot extends TimedRobot {
     SmartDashboard.putNumber("Encoder Right",m_robotContainer.driveSubsystem.getRightDistance());
     SmartDashboard.putNumber("Encoder Left",m_robotContainer.driveSubsystem.getLeftDistance());
     SmartDashboard.putNumber("Encoder R Rate",m_robotContainer.driveSubsystem.getRate());
-    //SmartDashboard.putNumber("TargetSpeed",m_robotContainer.driveSubsystem.getTargetSpeed(m_robotContainer.manette.getLeftY(),0));
+
+    SmartDashboard.putNumber("Encoder Cypher",m_robotContainer.elevatorSubsystem.getEncoderValue());
+   // SmartDashboard.putNumber("left y",m_robotContainer.leftY);
     CommandScheduler.getInstance().run();
 
+    DoubleSupplier leftY = () -> m_robotContainer.manette.getLeftY();
+    DoubleSupplier rightX = () -> m_robotContainer.manette.getRightX();
     //m_robotContainer.driveSubsystem.setFollowers();
   }
 
