@@ -7,7 +7,6 @@ package frc.robot;
 
 import frc.robot.commands.AutoCmd.Auto1CoralM;
 import frc.robot.commands.GettingInRangeCmd;
-import frc.robot.commands.IntakeCmd;
 import frc.robot.commands.NothingCmd;
 import frc.robot.commands.OutTakeCmd;
 import frc.robot.commands.AutoCmd.Auto1CoralL;
