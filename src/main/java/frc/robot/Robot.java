@@ -4,6 +4,8 @@
 
 package frc.robot;
 
+import edu.wpi.first.cameraserver.CameraServer;
+import edu.wpi.first.cscore.UsbCamera;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -31,6 +33,7 @@ public class Robot extends TimedRobot {
     m_robotContainer.driveSubsystem.resetEncoders();
 
     SmartDashboard.putData(m_robotContainer.driveSubsystem.gyro);
+    final UsbCamera drivercamera = CameraServer.startAutomaticCapture();
   }
 
   /**
@@ -40,6 +43,8 @@ public class Robot extends TimedRobot {
    * <p>This runs after the mode specific periodic functions, but before LiveWindow and
    * SmartDashboard integrated updating.
    */
+  
+
   @Override
   public void robotPeriodic() {
     // Runs the Scheduler.  This is responsible for polling buttons, adding newly-scheduled
