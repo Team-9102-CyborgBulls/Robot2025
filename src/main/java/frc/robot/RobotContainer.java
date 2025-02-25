@@ -6,6 +6,8 @@ package frc.robot;
 
 
 import frc.robot.commands.AutoCmd.Auto1CoralM;
+import frc.robot.commands.GettingInRangeCmd;
+import frc.robot.commands.IntakeCmd;
 import frc.robot.commands.NothingCmd;
 import frc.robot.commands.OutTakeCmd;
 import frc.robot.commands.AutoCmd.Auto1CoralL;
@@ -22,6 +24,7 @@ import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.OutTakeSubsystem;
+import frc.robot.subsystems.VisionSubsystem;
 
 import java.util.function.DoubleSupplier;
 
@@ -41,6 +44,9 @@ public class RobotContainer {
   // The robot's subsystems and commands are defined here...
   public final static DriveSubsystem driveSubsystem = new DriveSubsystem();
   public final DriveCmd driveCmd = new DriveCmd(driveSubsystem);
+
+  public final static VisionSubsystem visionsubsystem = new VisionSubsystem();
+  public final GettingInRangeCmd gettinginrange = new GettingInRangeCmd(driveSubsystem, visionsubsystem);
 
   public final OutTakeSubsystem outTakeSubsystem = new OutTakeSubsystem();
   public final OutTakeCmd outTakeCmd = new OutTakeCmd(outTakeSubsystem);
@@ -107,6 +113,8 @@ public class RobotContainer {
     Trigger DownButton = manette.povDown();
     Trigger LeftButton = manette.povLeft();
     Trigger RightButton = manette.povRight();
+
+    Trigger startButton = manette.start();
     
     
      
