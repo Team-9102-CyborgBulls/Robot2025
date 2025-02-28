@@ -24,12 +24,12 @@ public class OutTakeCmd extends Command {
 
   @Override
   public void execute() {
-    m_outTake.setOutTakeMotor(-0.3);
+    m_outTake.setOutTakeMotor(0.1);
   }
 
   @Override
   public boolean isFinished() {
-    if(RobotContainer.m_timer.get() >= 2){ //a définir
+    if(m_outTake.intake_sensor.get() == true){ //a définir
       return true;
   }
   else{

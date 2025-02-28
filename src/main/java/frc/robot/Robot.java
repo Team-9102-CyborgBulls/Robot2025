@@ -60,7 +60,8 @@ public class Robot extends TimedRobot {
     SmartDashboard.putNumber("Encoder Arm", m_robotContainer.armSubsystem.getEncoderArmValue());
    // SmartDashboard.putNumber("left y",m_robotContainer.leftY);
     CommandScheduler.getInstance().run();
-   
+    SmartDashboard.putBoolean("intake sensor",m_robotContainer.outTakeSubsystem.intake_sensor.get());
+       
     //m_robotContainer.driveSubsystem.setFollowers();
 
     //SmartDashboard. (m_robotContainer.drivercamera);
