@@ -1,14 +1,12 @@
 package frc.robot.subsystems;
 
 import com.revrobotics.spark.SparkMax;
+import com.revrobotics.RelativeEncoder;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
 
-import edu.wpi.first.wpilibj.Servo;
-
-import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
+import frc.robot.Constants;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class ArmSubsystem extends SubsystemBase {
@@ -17,13 +15,16 @@ public class ArmSubsystem extends SubsystemBase {
   SparkMax m_intakeArm = new SparkMax(6, MotorType.kBrushless);
 
   SparkMaxConfig configArm = new SparkMaxConfig();
+
+   RelativeEncoder armEncoder = m_armMotor.getEncoder(); 
   
   public ArmSubsystem() {
         configArm.voltageCompensation(12);
         configArm.smartCurrentLimit(40);
         configArm.idleMode(IdleMode.kCoast);
 
-        //m_armMotor.getEncoder().setPosition(0);
+        
+
 
   }
 
@@ -47,6 +48,12 @@ public class ArmSubsystem extends SubsystemBase {
     m_intakeArm.set(0);
   }
   
+public double getEncoderArmValue(){
+
+    //double valueEncoder
+    double value = armEncoder.getPosition() * ((1/152)*360);
+    return value;
+  }
   @Override
   public void periodic() {
     // This method will be called once per scheduler run

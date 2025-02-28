@@ -68,4 +68,9 @@ public final class Constants {
     public static final double ELEVATOR_L2_POSITION = 0.2; // a définir
     public static final double ELEVATOR_L3_POSITION = 0.2; // a définir
   }
+
+  public static final class ArmConstants {
+
+    public static final double ENCODER_DEGREES = (1/152)*360;
+  }
 }

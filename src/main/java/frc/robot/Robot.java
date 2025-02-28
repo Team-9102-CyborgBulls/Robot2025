@@ -57,6 +57,7 @@ public class Robot extends TimedRobot {
     SmartDashboard.putNumber("Encoder R Rate",m_robotContainer.driveSubsystem.getRate());
 
     SmartDashboard.putNumber("Encoder Cypher",m_robotContainer.elevatorSubsystem.getEncoderValue());
+    SmartDashboard.putNumber("Encoder Arm", m_robotContainer.armSubsystem.getEncoderArmValue());
    // SmartDashboard.putNumber("left y",m_robotContainer.leftY);
     CommandScheduler.getInstance().run();
    
