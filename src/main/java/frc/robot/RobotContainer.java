@@ -9,6 +9,11 @@ import frc.robot.commands.AutoCmd.Auto1CoralM;
 import frc.robot.commands.GettingInRangeCmd;
 import frc.robot.commands.NothingCmd;
 import frc.robot.commands.OutTakeCmd;
+import frc.robot.commands.ArmCmd.ArmDownCmd;
+import frc.robot.commands.ArmCmd.ArmUpCmd;
+import frc.robot.commands.ArmCmd.IntakeArmCmd;
+import frc.robot.commands.ArmCmd.IntakeArmReverseCmd;
+import frc.robot.commands.ArmCmd.ArmStillCmd;
 import frc.robot.commands.AutoCmd.Auto1CoralL;
 import frc.robot.commands.AutoCmd.Auto1CoralR;
 import frc.robot.commands.DriveCmd.DriveCmd;
@@ -19,6 +24,7 @@ import frc.robot.commands.ElevatorCmd.ElevatorStillCmd;
 import frc.robot.commands.ElevatorCmd.ElevatorUpCmd;
 import frc.robot.commands.IntakeCmd.IntakeDownCmd;
 import frc.robot.commands.IntakeCmd.IntakeUpCmd;
+import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
@@ -27,6 +33,10 @@ import frc.robot.subsystems.VisionSubsystem;
 
 import java.util.function.DoubleSupplier;
 
+import org.photonvision.PhotonCamera;
+
+import edu.wpi.first.cameraserver.CameraServer;
+import edu.wpi.first.cscore.UsbCamera;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -58,6 +68,19 @@ public class RobotContainer {
   public final ElevatorDownCmd elevatorDownCmd = new ElevatorDownCmd(elevatorSubsystem);
   public final ElevatorStillCmd elevatorStillCmd = new ElevatorStillCmd(elevatorSubsystem);
   public final ElevatorUpCmd elevatorUpCmd = new ElevatorUpCmd(elevatorSubsystem);
+
+  public final ArmSubsystem armSubsystem = new ArmSubsystem();
+  public final ArmDownCmd armDownCmd = new ArmDownCmd(armSubsystem);
+  public final ArmUpCmd armUpCmd = new ArmUpCmd(armSubsystem);
+  public final ArmStillCmd armStillCmd = new ArmStillCmd(armSubsystem);
+  public final IntakeArmCmd intakeArmCmd = new IntakeArmCmd(armSubsystem);
+  public final IntakeArmReverseCmd intakeArmReverseCmd = new IntakeArmReverseCmd(armSubsystem);
+  
+  public UsbCamera drivercamera = CameraServer.startAutomaticCapture();
+
+   public PhotonCamera camera = new PhotonCamera("photonvision");
+
+
   
   public static CommandXboxController manette = new CommandXboxController(0);
   public static Timer m_timer = new Timer();
@@ -123,6 +146,10 @@ public class RobotContainer {
     driveSubsystem.setDefaultCommand(driveCmd);
 
     elevatorSubsystem.setDefaultCommand(elevatorStillCmd);
+
+    armSubsystem.setDefaultCommand(armStillCmd);
+
+    //intakeSubsystem.setDefaultCommand(intakeUpCmd);
         
 
     /*manette
@@ -143,7 +170,10 @@ public class RobotContainer {
         .whileTrue(driveSubsystem.sysIdDynamic(SysIdRoutine.Direction.kReverse));*/
 
     manette.a().whileTrue(new OutTakeCmd(outTakeSubsystem));
-    //manette.b().onTrue(new IntakeUpCmd(intakeSubsystem));
+    manette.b().onTrue(new IntakeDownCmd(intakeSubsystem));
+
+    manette.y().whileTrue(new IntakeArmCmd(armSubsystem));
+    manette.x().whileTrue(new IntakeArmReverseCmd(armSubsystem));
 
     //UpButton.whileTrue(new InstantCommand(()-> driveSubsystem.driveRight(0.5))).whileFalse(new InstantCommand(()-> driveSubsystem.driveRight(0)));
     //DownButton.whileTrue(new InstantCommand(()-> driveSubsystem.driveRightFollow(0.3))).whileFalse(new InstantCommand(()-> driveSubsystem.driveRightFollow(0)));
@@ -151,17 +181,15 @@ public class RobotContainer {
     UpButton.whileTrue(new ElevatorUpCmd(elevatorSubsystem));
     DownButton.whileTrue(new ElevatorDownCmd(elevatorSubsystem));
 
-    LeftButton.whileTrue(new IntakeUpCmd(intakeSubsystem));
-    RightButton.whileTrue(new IntakeDownCmd(intakeSubsystem));
+    LeftButton.whileTrue(new ArmUpCmd(armSubsystem));
+    RightButton.whileTrue(new ArmDownCmd(armSubsystem));
     //LeftButton.whileTrue(new InstantCommand(()-> driveSubsystem.driveLeft(0.5))).whileFalse(new InstantCommand(()-> driveSubsystem.driveLeft(0)));
     //RightButton.whileTrue(new InstantCommand(()-> driveSubsystem.driveLeftFollow(0.3))).whileFalse(new InstantCommand(()-> driveSubsystem.driveLeftFollow(0)));
 
     rBumper.onTrue(new InstantCommand(() -> driveSubsystem.speedUp())); // Vitesse augmenté
     lBumper.onTrue(new InstantCommand(() -> driveSubsystem.speedDown())); // vitesse baissé
 
-    //intakeSubsystem.setDefaultCommand(intakeSubsystem.ServoDefaultCmd(intakeSubsystem, 1));
-    // Schedule exampleMethodCommand when the Xbox controller's B button is pressed,
-    // cancelling on release.
+    
     
   
   }

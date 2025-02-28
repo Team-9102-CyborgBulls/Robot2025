@@ -14,7 +14,7 @@ public class ElevatorSubsystem extends SubsystemBase {
     SparkMax m_elevatorMotor = new SparkMax(5, MotorType.kBrushless);
     static SparkMaxConfig configElevator = new SparkMaxConfig();
 
-    DutyCycleEncoder cypher = new DutyCycleEncoder(9);
+    public DutyCycleEncoder cypher = new DutyCycleEncoder(9);
 
     public ElevatorSubsystem(){
 
@@ -41,7 +41,8 @@ public class ElevatorSubsystem extends SubsystemBase {
             cpt+=1;
         }
 
+        double value = cpt + cypher.get();
         
-        return cypher.get();
+        return value;
     }
 }

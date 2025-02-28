@@ -18,6 +18,7 @@ public class GettingInRangeCmd extends Command {
     
     DriveSubsystem driveSubsystem;
     VisionSubsystem visionSubsystem;
+    RobotContainer m_robotContainer;
     public double range;
   
     public GettingInRangeCmd(DriveSubsystem drivesubsystem, VisionSubsystem visionSubsystem){
@@ -38,7 +39,7 @@ public class GettingInRangeCmd extends Command {
      
     double forwardSpeed = 0;
      double turnSpeed = 0;
-    PhotonPipelineResult result = visionSubsystem.camera.getLatestResult();
+    PhotonPipelineResult result = m_robotContainer.camera.getLatestResult();
 
         if (result.hasTargets()) {
             // First calculate range

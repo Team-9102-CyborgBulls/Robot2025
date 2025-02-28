@@ -23,7 +23,7 @@ public class IntakeDownCmd extends Command {
 
   @Override
   public void execute() {
-    m_intake.setIntakeZero();
+    m_intake.setServo(1);
   }
 
   @Override

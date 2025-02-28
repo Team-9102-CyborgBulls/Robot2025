@@ -33,7 +33,7 @@ public class Robot extends TimedRobot {
     m_robotContainer.driveSubsystem.resetEncoders();
 
     SmartDashboard.putData(m_robotContainer.driveSubsystem.gyro);
-    final UsbCamera drivercamera = CameraServer.startAutomaticCapture();
+    
   }
 
   /**
@@ -61,6 +61,8 @@ public class Robot extends TimedRobot {
     CommandScheduler.getInstance().run();
    
     //m_robotContainer.driveSubsystem.setFollowers();
+
+    //SmartDashboard. (m_robotContainer.drivercamera);
   }
 
   

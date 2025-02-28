@@ -1,6 +1,7 @@
 package frc.robot.commands.ElevatorCmd;
 
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.Constants;
 import frc.robot.RobotContainer;
 import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
@@ -31,7 +32,10 @@ public class ElevatorDownCmd extends Command{
 
   @Override
   public boolean isFinished() {
-    
+    if(m_elevator.cypher.get() <= Constants.ElevatorConstants.ELEVATOR_DOWN_POSITION){
+      return true;
+    }
+    //else if(m_elevator.cypher.get() <= Constants.ElevatorConstants.ELEVATOR_DOWN_POSITION)
     return false;
   }
   

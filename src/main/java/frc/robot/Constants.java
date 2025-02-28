@@ -61,4 +61,11 @@ public final class Constants {
     public static final double JOYSTICK_ROT_LIMIT = 0.8;
 }
   
+  public static final class ElevatorConstants {
+
+    public static final double ELEVATOR_DOWN_POSITION = 0.2; // a définir
+    public static final double ELEVATOR_INTAKE_POSITION = 0.2; // a définir
+    public static final double ELEVATOR_L2_POSITION = 0.2; // a définir
+    public static final double ELEVATOR_L3_POSITION = 0.2; // a définir
+  }
 }

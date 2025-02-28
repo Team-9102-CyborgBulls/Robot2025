@@ -1,18 +1,19 @@
-package frc.robot.commands.IntakeCmd;
+package frc.robot.commands.ArmCmd;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.RobotContainer;
+import frc.robot.subsystems.ArmSubsystem;
+import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 
-
-public class IntakeUpCmd extends Command {
+public class ArmDownCmd extends Command{
     
-    IntakeSubsystem m_intake;
-
-    public IntakeUpCmd(IntakeSubsystem intake){
-
-      this.m_intake = intake;
-      addRequirements(m_intake);
+ArmSubsystem m_armSubsytem;
+    
+    public ArmDownCmd(ArmSubsystem armSubsystem){
+    
+          this.m_armSubsytem = armSubsystem;
+      addRequirements(m_armSubsytem);
     }
 
     @Override
@@ -25,21 +26,18 @@ public class IntakeUpCmd extends Command {
 
   @Override
   public void execute() {
-    m_intake.setServo(0.5);
+    m_armSubsytem.setArmMotor(0.2);
   }
 
   @Override
   public boolean isFinished() {
-    if(RobotContainer.m_timer.get() >= 2){ //a définir
-      return true;
-  }
-  else{
+    
     return false;
   }
-  }
+  
 
   @Override
   public void end(boolean interrupted){
-    m_intake.setIntakeZero();
+    m_armSubsytem.stopArm();
   }
 }

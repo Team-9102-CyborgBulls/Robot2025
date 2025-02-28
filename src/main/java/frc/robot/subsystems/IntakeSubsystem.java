@@ -1,5 +1,3 @@
-
-
 package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj.Servo;
@@ -11,7 +9,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 public class IntakeSubsystem extends SubsystemBase {
   
   
-  public Servo intakeservo = new Servo(8);
+  public Servo intakeservo = new Servo(9);
   public IntakeSubsystem() {
 
   }
@@ -22,8 +20,8 @@ public Command ServoDefaultCmd(IntakeSubsystem intakeSubsystem, double angle) {/
 
 }
 
-  public void setIntakeAngle(double angle) {
-    intakeservo.setAngle(angle);
+  public void setServo(double pos) {
+    intakeservo.set(pos);
   }
 
   public void setIntakeZero() {
