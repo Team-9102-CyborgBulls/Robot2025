@@ -24,7 +24,7 @@ public class OutTakeCmd extends Command {
 
   @Override
   public void execute() {
-    m_outTake.setOutTakeMotor(0.3);
+    m_outTake.setOutTakeMotor(0.1);
   }
 
   @Override

@@ -12,7 +12,7 @@ public class OutTakeSubsystem extends SubsystemBase {
     
     SparkMax m_outTakeMotor = new SparkMax(9, MotorType.kBrushless);
     static SparkMaxConfig configOut = new SparkMaxConfig();
-    public static DigitalInput intake_sensor = new DigitalInput(8);
+    public DigitalInput intake_sensor = new DigitalInput(8);
     
 
     public OutTakeSubsystem(){
