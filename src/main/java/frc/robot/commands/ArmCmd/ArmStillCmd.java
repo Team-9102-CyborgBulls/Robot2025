@@ -22,7 +22,7 @@ ArmSubsystem m_armSubsytem;
 
   @Override
   public void execute() {
-    m_armSubsytem.setArmMotor(-0.02);
+    m_armSubsytem.setArmMotor(0.02);
   }
 
   @Override

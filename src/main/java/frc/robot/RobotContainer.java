@@ -8,6 +8,7 @@ package frc.robot;
 import frc.robot.commands.AutoCmd.Auto1CoralM;
 import frc.robot.commands.GettingInRangeCmd;
 import frc.robot.commands.NothingCmd;
+import frc.robot.commands.OutTakeAlgueCmd;
 import frc.robot.commands.OutTakeCmd;
 import frc.robot.commands.ArmCmd.ArmDownCmd;
 import frc.robot.commands.ArmCmd.ArmUpCmd;
@@ -28,6 +29,7 @@ import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
+import frc.robot.subsystems.OutTakeAlgueSubsystem;
 import frc.robot.subsystems.OutTakeSubsystem;
 import frc.robot.subsystems.VisionSubsystem;
 
@@ -63,12 +65,14 @@ public class RobotContainer {
   public final IntakeSubsystem intakeSubsystem = new IntakeSubsystem();
   public final IntakeUpCmd intakeUpCmd = new IntakeUpCmd(intakeSubsystem);
   public final IntakeDownCmd intakeDownCmd = new IntakeDownCmd(intakeSubsystem);
+  
 
   double setpoint;
   public final ElevatorSubsystem elevatorSubsystem = new ElevatorSubsystem();
   public final ElevatorDownCmd elevatorDownCmd = new ElevatorDownCmd(elevatorSubsystem,setpoint);
   public final ElevatorStillCmd elevatorStillCmd = new ElevatorStillCmd(elevatorSubsystem);
   public final ElevatorUpCmd elevatorUpCmd = new ElevatorUpCmd(elevatorSubsystem,setpoint);
+  
 
   public final ArmSubsystem armSubsystem = new ArmSubsystem();
   public final ArmDownCmd armDownCmd = new ArmDownCmd(armSubsystem);
@@ -76,6 +80,9 @@ public class RobotContainer {
   public final ArmStillCmd armStillCmd = new ArmStillCmd(armSubsystem);
   public final IntakeArmCmd intakeArmCmd = new IntakeArmCmd(armSubsystem);
   public final IntakeArmReverseCmd intakeArmReverseCmd = new IntakeArmReverseCmd(armSubsystem);
+
+  public final OutTakeAlgueSubsystem OutTakeAlgueSubsystem = new OutTakeAlgueSubsystem();
+  public final OutTakeAlgueCmd outTakeAlgueCmd = new OutTakeAlgueCmd(OutTakeAlgueSubsystem);
   
   public UsbCamera drivercamera = CameraServer.startAutomaticCapture();
 
@@ -180,8 +187,10 @@ public class RobotContainer {
     //DownButton.whileTrue(new InstantCommand(()-> driveSubsystem.driveRightFollow(0.3))).whileFalse(new InstantCommand(()-> driveSubsystem.driveRightFollow(0)));
 
     UpButton.onTrue(new ElevatorUpCmd(elevatorSubsystem, Constants.ElevatorConstants.ELEVATOR_L3_POSITION));
-    manette.start().onTrue(new ElevatorUpCmd(elevatorSubsystem, Constants.ElevatorConstants.ELEVATOR_L2_POSITION));
+    //manette.start().onTrue(new ElevatorUpCmd(elevatorSubsystem, Constants.ElevatorConstants.ELEVATOR_L2_POSITION));
     DownButton.onTrue(new ElevatorDownCmd(elevatorSubsystem,Constants.ElevatorConstants.ELEVATOR_DOWN_POSITION));
+
+    manette.start().whileTrue(outTakeAlgueCmd);
 
     LeftButton.whileTrue(new ArmUpCmd(armSubsystem));
     RightButton.whileTrue(new ArmDownCmd(armSubsystem));

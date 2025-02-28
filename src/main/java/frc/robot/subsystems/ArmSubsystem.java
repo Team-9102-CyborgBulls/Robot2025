@@ -22,10 +22,11 @@ public class ArmSubsystem extends SubsystemBase {
         configArm.voltageCompensation(12);
         configArm.smartCurrentLimit(40);
         configArm.idleMode(IdleMode.kCoast);
-
+        configArm.inverted(true);
+        m_armMotor.configure(configArm, null, null);
         
 
-
+        
   }
 
   public void setArmMotor(double speed) {
