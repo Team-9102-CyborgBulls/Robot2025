@@ -4,8 +4,10 @@ package frc.robot.subsystems;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
+import com.revrobotics.RelativeEncoder;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
@@ -14,7 +16,8 @@ public class ElevatorSubsystem extends SubsystemBase {
     SparkMax m_elevatorMotor = new SparkMax(5, MotorType.kBrushless);
     static SparkMaxConfig configElevator = new SparkMaxConfig();
 
-    public DutyCycleEncoder cypher = new DutyCycleEncoder(9);
+    public RelativeEncoder elevatorEncoder = m_elevatorMotor.getEncoder();
+    
 
     public ElevatorSubsystem(){
 
@@ -34,15 +37,10 @@ public class ElevatorSubsystem extends SubsystemBase {
     }
 
     public double getEncoderValue(){
+      return (-elevatorEncoder.getPosition()/25) *(2*Math.PI*2.45);
+    }
 
-        double cpt = 0;
-
-        if (cypher.get() >= 1){
-            cpt+=1;
-        }
-
-        double value = cpt + cypher.get();
-        
-        return value;
+    public void resetElevatorEncoder(){
+        elevatorEncoder.setPosition(0);
     }
 }

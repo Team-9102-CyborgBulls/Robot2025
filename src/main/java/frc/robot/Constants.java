@@ -64,9 +64,10 @@ public final class Constants {
   public static final class ElevatorConstants {
 
     public static final double ELEVATOR_DOWN_POSITION = 0.2; // a définir
-    public static final double ELEVATOR_INTAKE_POSITION = 0.2; // a définir
-    public static final double ELEVATOR_L2_POSITION = 0.2; // a définir
-    public static final double ELEVATOR_L3_POSITION = 0.2; // a définir
+    public static final double ELEVATOR_L2_POSITION = 28.14; // a définir
+    public static final double ELEVATOR_L3_POSITION = 65; // a définir
+    public static final double kp = 0.02;
+    public static final double kg = 0.03;
   }
 
   public static final class ArmConstants {

@@ -50,8 +50,8 @@ public class ArmSubsystem extends SubsystemBase {
   
 public double getEncoderArmValue(){
 
-    //double valueEncoder
-    double value = armEncoder.getPosition() * ((1/152)*360);
+    double valueEncoder = armEncoder.getPosition();
+    double value = valueEncoder * ((1/152)*360);
     return value;
   }
   @Override

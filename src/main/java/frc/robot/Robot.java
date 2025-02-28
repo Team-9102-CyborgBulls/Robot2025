@@ -33,6 +33,8 @@ public class Robot extends TimedRobot {
     m_robotContainer.driveSubsystem.resetEncoders();
 
     SmartDashboard.putData(m_robotContainer.driveSubsystem.gyro);
+
+    m_robotContainer.elevatorSubsystem.resetElevatorEncoder();
     
   }
 
@@ -56,7 +58,8 @@ public class Robot extends TimedRobot {
     SmartDashboard.putNumber("Encoder Left",m_robotContainer.driveSubsystem.getLeftDistance());
     SmartDashboard.putNumber("Encoder R Rate",m_robotContainer.driveSubsystem.getRate());
 
-    SmartDashboard.putNumber("Encoder Cypher",m_robotContainer.elevatorSubsystem.getEncoderValue());
+    SmartDashboard.putNumber("Encoder Value",m_robotContainer.elevatorSubsystem.getEncoderValue());
+    
     SmartDashboard.putNumber("Encoder Arm", m_robotContainer.armSubsystem.getEncoderArmValue());
    // SmartDashboard.putNumber("left y",m_robotContainer.leftY);
     CommandScheduler.getInstance().run();
@@ -73,6 +76,7 @@ public class Robot extends TimedRobot {
     m_autonomousCommand = m_robotContainer.getAutonomousCommand();
     m_robotContainer.driveSubsystem.zeroHeading();
     m_robotContainer.driveSubsystem.resetEncoders();
+    m_robotContainer.elevatorSubsystem.resetElevatorEncoder();
 
     // schedule the autonomous command (example)
     if (m_autonomousCommand != null) {
@@ -95,6 +99,7 @@ public class Robot extends TimedRobot {
     }
     m_robotContainer.driveSubsystem.zeroHeading();
     m_robotContainer.driveSubsystem.resetEncoders();
+    m_robotContainer.elevatorSubsystem.resetElevatorEncoder();
   }
 
   /** This function is called periodically during operator control. */

@@ -7,13 +7,15 @@ import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 
 public class ElevatorDownCmd extends Command{
-    IntakeSubsystem m_intake;
+    
 
     ElevatorSubsystem m_elevator;
+    double setpoint;
 
-    public ElevatorDownCmd(ElevatorSubsystem elevator){
+    public ElevatorDownCmd(ElevatorSubsystem elevator,double setpoint){
 
       this.m_elevator = elevator;
+      this.setpoint = setpoint;
       addRequirements(m_elevator);
     }
 
@@ -27,21 +29,30 @@ public class ElevatorDownCmd extends Command{
 
   @Override
   public void execute() {
-    m_elevator.setElevatorMotor(-0.7);
+
+    double error = setpoint - m_elevator.getEncoderValue();
+    double speed = (Constants.ElevatorConstants.kp * error) + Constants.ElevatorConstants.kg;
+
+    if(speed <= -0.7){
+      m_elevator.setElevatorMotor(-0.7);
+    }else{
+    m_elevator.setElevatorMotor(speed); // value déjà négative car setpoit < encoderValue
   }
+}
 
   @Override
   public boolean isFinished() {
-    if(m_elevator.cypher.get() <= Constants.ElevatorConstants.ELEVATOR_DOWN_POSITION){
+    if(m_elevator.getEncoderValue() <= Constants.ElevatorConstants.ELEVATOR_DOWN_POSITION){
       return true;
+    }else{
+      return false;
     }
-    //else if(m_elevator.cypher.get() <= Constants.ElevatorConstants.ELEVATOR_DOWN_POSITION)
-    return false;
+    
   }
   
 
   @Override
   public void end(boolean interrupted){
-    m_elevator.stop();
+    m_elevator.setElevatorMotor(Constants.ElevatorConstants.kg);
   }
 }

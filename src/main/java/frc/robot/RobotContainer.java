@@ -64,10 +64,11 @@ public class RobotContainer {
   public final IntakeUpCmd intakeUpCmd = new IntakeUpCmd(intakeSubsystem);
   public final IntakeDownCmd intakeDownCmd = new IntakeDownCmd(intakeSubsystem);
 
+  double setpoint;
   public final ElevatorSubsystem elevatorSubsystem = new ElevatorSubsystem();
-  public final ElevatorDownCmd elevatorDownCmd = new ElevatorDownCmd(elevatorSubsystem);
+  public final ElevatorDownCmd elevatorDownCmd = new ElevatorDownCmd(elevatorSubsystem,setpoint);
   public final ElevatorStillCmd elevatorStillCmd = new ElevatorStillCmd(elevatorSubsystem);
-  public final ElevatorUpCmd elevatorUpCmd = new ElevatorUpCmd(elevatorSubsystem);
+  public final ElevatorUpCmd elevatorUpCmd = new ElevatorUpCmd(elevatorSubsystem,setpoint);
 
   public final ArmSubsystem armSubsystem = new ArmSubsystem();
   public final ArmDownCmd armDownCmd = new ArmDownCmd(armSubsystem);
@@ -178,8 +179,9 @@ public class RobotContainer {
     //UpButton.whileTrue(new InstantCommand(()-> driveSubsystem.driveRight(0.5))).whileFalse(new InstantCommand(()-> driveSubsystem.driveRight(0)));
     //DownButton.whileTrue(new InstantCommand(()-> driveSubsystem.driveRightFollow(0.3))).whileFalse(new InstantCommand(()-> driveSubsystem.driveRightFollow(0)));
 
-    UpButton.whileTrue(new ElevatorUpCmd(elevatorSubsystem));
-    DownButton.whileTrue(new ElevatorDownCmd(elevatorSubsystem));
+    UpButton.onTrue(new ElevatorUpCmd(elevatorSubsystem, Constants.ElevatorConstants.ELEVATOR_L3_POSITION));
+    manette.start().onTrue(new ElevatorUpCmd(elevatorSubsystem, Constants.ElevatorConstants.ELEVATOR_L2_POSITION));
+    DownButton.onTrue(new ElevatorDownCmd(elevatorSubsystem,Constants.ElevatorConstants.ELEVATOR_DOWN_POSITION));
 
     LeftButton.whileTrue(new ArmUpCmd(armSubsystem));
     RightButton.whileTrue(new ArmDownCmd(armSubsystem));

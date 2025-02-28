@@ -1,6 +1,7 @@
 package frc.robot.commands.ElevatorCmd;
 
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.Constants;
 import frc.robot.RobotContainer;
 import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
@@ -8,10 +9,12 @@ import frc.robot.subsystems.IntakeSubsystem;
 public class ElevatorUpCmd extends Command {
     
     ElevatorSubsystem m_elevator;
+    double setpoint;
 
-    public ElevatorUpCmd(ElevatorSubsystem elevator){
+    public ElevatorUpCmd(ElevatorSubsystem elevator, double setpoint){
 
       this.m_elevator = elevator;
+      this.setpoint = setpoint;
       addRequirements(m_elevator);
     }
 
@@ -25,18 +28,31 @@ public class ElevatorUpCmd extends Command {
 
   @Override
   public void execute() {
-    m_elevator.setElevatorMotor(0.8);
+    double error = setpoint - m_elevator.getEncoderValue();
+    double speed = (Constants.ElevatorConstants.kp * error) + Constants.ElevatorConstants.kg;
+
+    if(speed >= 0.8){
+      m_elevator.setElevatorMotor(0.8);
+    
+    } else{
+      m_elevator.setElevatorMotor(speed);
+    }
+    
   }
 
   @Override
   public boolean isFinished() {
+    if(m_elevator.getEncoderValue() >= Constants.ElevatorConstants.ELEVATOR_L3_POSITION + 3){
+      return true;
+    }else{
+      return false;
+    }
     
-    return false;
   }
   
 
   @Override
   public void end(boolean interrupted){
-    m_elevator.stop();
+    m_elevator.setElevatorMotor(Constants.ElevatorConstants.kg);;
   }
 }
