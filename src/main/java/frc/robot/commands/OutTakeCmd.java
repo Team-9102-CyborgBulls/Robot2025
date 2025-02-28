@@ -29,7 +29,7 @@ public class OutTakeCmd extends Command {
 
   @Override
   public boolean isFinished() {
-    if(RobotContainer.m_timer.get() >= 2){ //a définir
+    if(m_outTake.intake_sensor.get() == true){ //a définir
       return true;
   }
   else{

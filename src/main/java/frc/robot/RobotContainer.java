@@ -131,7 +131,7 @@ public class RobotContainer {
         
         .whileTrue(driveSubsystem.sysIdDynamic(SysIdRoutine.Direction.kReverse));*/
 
-    manette.a().whileTrue(new OutTakeCmd(outTakeSubsystem));
+    manette.a().onTrue(new OutTakeCmd(outTakeSubsystem));
     manette.b().onTrue(new IntakeCmd(intakeSubsystem));
 
     UpButton.whileTrue(new InstantCommand(()-> driveSubsystem.driveRight(0.5))).whileFalse(new InstantCommand(()-> driveSubsystem.driveRight(0)));
