@@ -24,9 +24,14 @@ import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.OutTakeSubsystem;
 import frc.robot.subsystems.VisionSubsystem;
+import frc.robot.subsystems.VisionSubsystem2;
 
 import java.util.function.DoubleSupplier;
 
+import org.photonvision.PhotonCamera;
+
+import edu.wpi.first.cameraserver.CameraServer;
+import edu.wpi.first.cscore.UsbCamera;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -44,7 +49,8 @@ public class RobotContainer {
   public final static DriveSubsystem driveSubsystem = new DriveSubsystem();
   public final DriveCmd driveCmd = new DriveCmd(driveSubsystem);
 
-  public final static VisionSubsystem visionsubsystem = new VisionSubsystem();
+  public final VisionSubsystem visionsubsystem = new VisionSubsystem();
+  public final static VisionSubsystem2 visionSubsystem2 = new VisionSubsystem2();
   public final GettingInRangeCmd gettinginrange = new GettingInRangeCmd(driveSubsystem, visionsubsystem);
 
   public final OutTakeSubsystem outTakeSubsystem = new OutTakeSubsystem();
@@ -53,6 +59,10 @@ public class RobotContainer {
   public final IntakeSubsystem intakeSubsystem = new IntakeSubsystem();
   public final IntakeUpCmd intakeUpCmd = new IntakeUpCmd(intakeSubsystem);
   public final IntakeDownCmd intakeDownCmd = new IntakeDownCmd(intakeSubsystem);
+
+  public final UsbCamera drivercamera = CameraServer.startAutomaticCapture();
+  
+
 
   public final ElevatorSubsystem elevatorSubsystem = new ElevatorSubsystem();
   public final ElevatorDownCmd elevatorDownCmd = new ElevatorDownCmd(elevatorSubsystem);
@@ -158,6 +168,8 @@ public class RobotContainer {
 
     rBumper.onTrue(new InstantCommand(() -> driveSubsystem.speedUp())); // Vitesse augmenté
     lBumper.onTrue(new InstantCommand(() -> driveSubsystem.speedDown())); // vitesse baissé
+
+    startButton.whileTrue(gettinginrange);
 
     //intakeSubsystem.setDefaultCommand(intakeSubsystem.ServoDefaultCmd(intakeSubsystem, 1));
     // Schedule exampleMethodCommand when the Xbox controller's B button is pressed,

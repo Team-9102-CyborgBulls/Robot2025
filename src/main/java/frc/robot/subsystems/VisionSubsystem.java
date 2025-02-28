@@ -16,15 +16,11 @@ public class VisionSubsystem extends SubsystemBase { // Déclaration de la class
     
     // Angle entre l'horizontal et la caméra.
     public static final double CAMERA_PITCH_RADIANS = Units.degreesToRadians(0);
+
+    public final PhotonCamera photonCamera = new PhotonCamera("photonvision");
     
     // Distance souhaitée par rapport à la cible
     public static final double GOAL_RANGE_METERS = 1;
-    
-    // Changer ceci pour correspondre au nom de votre caméra
-    public PhotonCamera camera = new PhotonCamera("photonvision");
-
-    //objet getlatestresult
-    PhotonPipelineResult result = camera.getLatestResult();
     
     // Les constantes PID doivent être ajustées par robot
     final static double P_GAIN = 0.1;

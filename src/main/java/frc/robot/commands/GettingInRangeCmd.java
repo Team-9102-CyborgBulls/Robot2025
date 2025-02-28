@@ -8,6 +8,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import frc.robot.RobotContainer;
+import frc.robot.commands.DriveCmd.DriveCmd;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.VisionSubsystem;
 
@@ -18,13 +19,14 @@ public class GettingInRangeCmd extends Command {
     
     DriveSubsystem driveSubsystem;
     VisionSubsystem visionSubsystem;
+    RobotContainer m_robotContainer;
     public double range;
   
     public GettingInRangeCmd(DriveSubsystem drivesubsystem, VisionSubsystem visionSubsystem){
 
         this.driveSubsystem = drivesubsystem;
         this.visionSubsystem = visionSubsystem;
-       
+      
         addRequirements(driveSubsystem);
 
     }
@@ -37,38 +39,49 @@ public class GettingInRangeCmd extends Command {
   public void execute() {
      
     double forwardSpeed = 0;
-     double turnSpeed = 0;
-    PhotonPipelineResult result = visionSubsystem.camera.getLatestResult();
-
+    double turnSpeed = 0;
+    // Read in relevant data from the Camera
+    boolean targetVisible = false;
+    double targetYaw = 0.0;
+    double targetRange = 0.0;
+    var results = visionSubsystem.photonCamera.getAllUnreadResults();
+    if (!results.isEmpty()) {
+        // Camera processed a new frame since last
+        // Get the last one in the list.
+        var result = results.get(results.size() - 1);
         if (result.hasTargets()) {
-            // First calculate range
-            range =
-                    PhotonUtils.calculateDistanceToTargetMeters(
-                            VisionSubsystem.CAMERA_HEIGHT_METERS,
-                            VisionSubsystem.TARGET_HEIGHT_METERS,
-                            VisionSubsystem.CAMERA_PITCH_RADIANS,
-                            Units.degreesToRadians(result.getBestTarget().getPitch()));
+            // At least one AprilTag was seen by the camera
+            for (var target : result.getTargets()) {
+                if (target.getFiducialId() == 10) {
+                    // Found Tag 10, record its information
+                    targetYaw = target.getYaw();
+                    targetRange =
+                            PhotonUtils.calculateDistanceToTargetMeters(
+                                     0.32, // Measured with a tape measure, or in CAD.
+                                     0.17, // 
+                                    Units.degreesToRadians(0), // Measured with a protractor, or in CAD.
+                                    Units.degreesToRadians(target.getPitch()));
 
-            // Use this range as the measurement we give to the PID controller.
-            // -1.0 required to ensure positive PID controller effort _increases_ range
-            forwardSpeed = -VisionSubsystem.controller.calculate(range, VisionSubsystem.GOAL_RANGE_METERS);
-        } else if(result.hasTargets() == false) {
-            // If we have no targets, stay still.
-            forwardSpeed = 0;
+                    targetVisible = true;
+                }
+            }
         }
-        if(forwardSpeed > 0.5){
-          forwardSpeed = 0.5;
-       }
-       else if(forwardSpeed < -0.5){
-         forwardSpeed = -0.5;
-       }
-    
-        driveSubsystem.arcadeDrive(forwardSpeed, 0);
-    
-    SmartDashboard.putNumber("range",range);
-    SmartDashboard.putNumber("fdspeed", forwardSpeed);
+        
+    }
+    SmartDashboard.putNumber("TargetYaw", targetYaw);
+    SmartDashboard.putNumber("ForwardSpeed",forwardSpeed);
+    SmartDashboard.putNumber("turnSpeed", turnSpeed);
+    SmartDashboard.putNumber("targetRange",targetRange);
+
+    if (targetVisible){
+      
+      turnSpeed = (0 - targetYaw) * 0.04;
+      forwardSpeed = (1.0 - targetRange) * 0.1;
+      driveSubsystem.arcadeDrive(forwardSpeed, turnSpeed);
+    }
 
   }
+  
 
   @Override
   public void end(boolean interrupted){
@@ -79,7 +92,7 @@ public class GettingInRangeCmd extends Command {
 
   @Override
   public boolean isFinished() {
-    if(range > 2.42 && range < 3.02){
+    if(range > 0.8 && range < 1.2){
       System.out.println("c");
       return true;
     }
