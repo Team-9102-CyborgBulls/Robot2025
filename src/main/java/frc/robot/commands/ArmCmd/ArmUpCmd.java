@@ -8,10 +8,12 @@ import frc.robot.subsystems.ArmSubsystem;
 public class ArmUpCmd extends Command{
     
 ArmSubsystem m_armSubsytem;
+double setpoint;
     
-    public ArmUpCmd(ArmSubsystem armSubsystem){
+    public ArmUpCmd(ArmSubsystem armSubsystem){//, //double setpoint){
     
           this.m_armSubsytem = armSubsystem;
+          //this.setpoint = setpoint;
       addRequirements(m_armSubsytem);
     }
 

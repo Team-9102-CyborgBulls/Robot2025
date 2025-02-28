@@ -16,7 +16,7 @@ public class ArmSubsystem extends SubsystemBase {
 
   SparkMaxConfig configArm = new SparkMaxConfig();
 
-   RelativeEncoder armEncoder = m_armMotor.getEncoder(); 
+   public RelativeEncoder armEncoder = m_armMotor.getEncoder(); 
   
   public ArmSubsystem() {
         configArm.voltageCompensation(12);
@@ -50,9 +50,7 @@ public class ArmSubsystem extends SubsystemBase {
   
 public double getEncoderArmValue(){
 
-    double valueEncoder = armEncoder.getPosition();
-    double value = valueEncoder * ((1/152)*360);
-    return value;
+    return armEncoder.getPosition() *360/125;
   }
   @Override
   public void periodic() {
