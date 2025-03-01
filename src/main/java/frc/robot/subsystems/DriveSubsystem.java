@@ -68,10 +68,10 @@ public class DriveSubsystem extends SubsystemBase {
      public double direction = 1.0;
      public double speed_changer = 0.6;
 
-    SparkMax m_MotorRight = new SparkMax(4, MotorType.kBrushed);
-    SparkMax m_MotorRightFollow = new SparkMax(3, MotorType.kBrushed);
-    SparkMax m_MotorLeft = new SparkMax(1, MotorType.kBrushed);
-    SparkMax m_MotorLeftFollow = new SparkMax(10, MotorType.kBrushed);
+    SparkMax m_MotorRight = new SparkMax(Constants.CANIdConstants.ID_MOTEUR_DROIT, MotorType.kBrushed);
+    SparkMax m_MotorRightFollow = new SparkMax(Constants.CANIdConstants.ID_MOTEUR_DROIT_FOLLOWER, MotorType.kBrushed);
+    SparkMax m_MotorLeft = new SparkMax(Constants.CANIdConstants.ID_MOTEUR_GAUCHE, MotorType.kBrushed);
+    SparkMax m_MotorLeftFollow = new SparkMax(Constants.CANIdConstants.ID_MOTEUR_GAUCHE_FOLLOWER, MotorType.kBrushed);
 
     static SparkMaxConfig config = new SparkMaxConfig();
     public static AHRS gyro = new AHRS(NavXComType.kMXP_SPI);
@@ -211,25 +211,6 @@ public DriveSubsystem() {
 
 //Drive methods :
 
-
-private void setVoltage(double volts) {
-  m_MotorLeft.setVoltage(volts);
-  m_MotorRight.setVoltage(volts);
-}
-
-//@Override
-public void drive(ChassisSpeeds speeds) {
-  DifferentialDriveWheelSpeeds wheelSpeeds = Constants.DriveConstants.kDriveKinematics.toWheelSpeeds(speeds);
-  wheelSpeeds.desaturate(Constants.DriveConstants.MAX_DRIVING_VELOCITY_METERS_PER_SECOND);
-
-  m_MotorLeft.setVoltage((wheelSpeeds.leftMetersPerSecond / Constants.DriveConstants.MAX_DRIVING_VELOCITY_METERS_PER_SECOND) * 12.0);
-  m_MotorRight.setVoltage((wheelSpeeds.rightMetersPerSecond / Constants.DriveConstants.MAX_DRIVING_VELOCITY_METERS_PER_SECOND) * 12.0);
-}
-
-
-
-
-
   public void arcadeDrive(double fwd, double rot){
     
     
@@ -304,9 +285,9 @@ public void drive(ChassisSpeeds speeds) {
 
 // Speed changer methods :
 
-    /*public void reverse(){
+    public void reverse(){
       direction = -direction;
-    }*/
+    }
 
     public void speedUp(){
       if(speed_changer <= 0.8){

@@ -9,12 +9,13 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
 
 public class OutTakeAlgueSubsystem extends SubsystemBase {
 
-  WPI_TalonSRX m_OutTakeAlgueMotor = new WPI_TalonSRX(2);
+  WPI_TalonSRX m_OutTakeAlgueMotor = new WPI_TalonSRX(Constants.CANIdConstants.ID_MOTEUR_OUTTAKE_ALGUE);
   DigitalInput limitSwitch = new DigitalInput(7);
-  /** Creates a new OutTakeAlgueSubsystem. */
+  
   public OutTakeAlgueSubsystem() {
 
     

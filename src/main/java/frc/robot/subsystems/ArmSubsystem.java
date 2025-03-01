@@ -12,7 +12,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 public class ArmSubsystem extends SubsystemBase {
   
   SparkMax m_armMotor = new SparkMax(7, MotorType.kBrushless);
-  SparkMax m_intakeArm = new SparkMax(6, MotorType.kBrushless);
+ 
 
   SparkMaxConfig configArm = new SparkMaxConfig();
 
@@ -21,7 +21,7 @@ public class ArmSubsystem extends SubsystemBase {
   public ArmSubsystem() {
         configArm.voltageCompensation(12);
         configArm.smartCurrentLimit(40);
-        configArm.idleMode(IdleMode.kCoast);
+        configArm.idleMode(IdleMode.kBrake);
         configArm.inverted(true);
         m_armMotor.configure(configArm, null, null);
         
@@ -37,17 +37,7 @@ public class ArmSubsystem extends SubsystemBase {
     m_armMotor.set(0);
   }
 
-  public void setIntakeArm(){
-    m_intakeArm.set(0.2);
-  }
-
-  public void setIntakeArmReverse(){
-    m_intakeArm.set(-0.2);
-  }
-
-  public void stopIntakeArm(){
-    m_intakeArm.set(0);
-  }
+  
   
 public double getEncoderArmValue(){
 

@@ -1,15 +1,15 @@
-package frc.robot.commands.IntakeCmd;
+package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.RobotContainer;
-import frc.robot.subsystems.IntakeSubsystem;
+import frc.robot.subsystems.IntakeAlgueSubsystem;
 
 
-public class IntakeUpCmd extends Command {
+public class IntakeAlgueCmd extends Command {
     
-    IntakeSubsystem m_intake;
+    IntakeAlgueSubsystem m_intake;
 
-    public IntakeUpCmd(IntakeSubsystem intake){
+    public IntakeAlgueCmd(IntakeAlgueSubsystem intake){
 
       this.m_intake = intake;
       addRequirements(m_intake);
@@ -25,7 +25,7 @@ public class IntakeUpCmd extends Command {
 
   @Override
   public void execute() {
-    m_intake.setServo(0.5);
+    m_intake.setIntakeAlgueMotor(0.3);
   }
 
   @Override
@@ -40,6 +40,6 @@ public class IntakeUpCmd extends Command {
 
   @Override
   public void end(boolean interrupted){
-    m_intake.setIntakeZero();
+    m_intake.setIntakeAlgueMotor(0);
   }
 }

@@ -1,14 +1,14 @@
-package frc.robot.commands;
+package frc.robot.commands.OutTakeCmd;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.RobotContainer;
-import frc.robot.subsystems.OutTakeSubsystem;
+import frc.robot.subsystems.OutTakeCoralSubsystem;
 
 public class OutTakeCmd extends Command {
     
-    OutTakeSubsystem m_outTake;
+    OutTakeCoralSubsystem m_outTake;
 
-    public OutTakeCmd(OutTakeSubsystem outTake){
+    public OutTakeCmd(OutTakeCoralSubsystem outTake){
 
       this.m_outTake = outTake;
       addRequirements(m_outTake);

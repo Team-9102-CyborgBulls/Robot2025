@@ -19,6 +19,21 @@ public final class Constants {
   public static class OperatorConstants {
     public static final int kDriverControllerPort = 0;
   }
+
+  public static class CANIdConstants {
+    public static final int ID_MOTEUR_GAUCHE = 1;
+    public static final int ID_MOTEUR_GAUCHE_FOLLOWER = 10;
+    public static final int ID_MOTEUR_DROIT = 3;
+    public static final int ID_MOTEUR_DROIT_FOLLOWER = 4;
+
+    public static final int ID_MOTEUR_ELEVATOR = 5;
+    public static final int ID_MOTEUR_INTAKE_ALGUE = 6;
+    public static final int ID_MOTEUR_BRAS = 7;
+    public static final int ID_MOTEUR_OUTTAKE_ALGUE = 2;
+    public static final int ID_MOTEUR_OUTTAKE_CORAL = 9;
+    
+
+  }
   public static class DriveConstants {
 
     public static final boolean kRightInverted = true;
@@ -28,12 +43,6 @@ public final class Constants {
     public static final double ksVolt = 11.332;
     public static final double kaVoltSecondsSquaredPerMeter = 7.3102;
     public static final double kp = 0.17843;
-
-    public static final double MAX_DRIVING_VELOCITY_METERS_PER_SECOND = 5;
-        public static final double MAX_DRIVING_ACCELERATION_METERS_PER_SECOND_SQUARED = 8;
-        public static final double MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND = 20;
-        public static final double MAX_ANGULAR_ACCELERATION_RADIANS_PER_SECOND_SQUARED = 40;
-      
     
 
     // Reasonable baseline values for a RAMSETE follower in units of meters and seconds
@@ -53,13 +62,8 @@ public final class Constants {
 
   }
 
-  public static final class Controls {
-    public static final double JOYSTICK_INPUT_RATE_LIMIT = 15.0;
-    public static final double JOYSTICK_INPUT_DEADBAND = 0.1;
-    public static final double JOYSTICK_CURVE_EXP = 2;
-    public static final double JOYSTICK_ROT_CURVE_EXP = 3;
-    public static final double JOYSTICK_ROT_LIMIT = 0.8;
-}
+ 
+
   
   public static final class ElevatorConstants {
 
@@ -73,9 +77,6 @@ public final class Constants {
   public static final class ArmConstants {
 
     public static final double ENCODER_DEGREES = (1/152)*360;
-    public static final double ARM_DOWN_POSITION = 0.1; // a définir
-    public static final double ARM_UP_POSITION = 0; // a définir
-    public static final double ARM_90_POSITION = 80; // a définir
-
+    
   }
 }
