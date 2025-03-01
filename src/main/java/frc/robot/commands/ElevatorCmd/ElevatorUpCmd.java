@@ -11,7 +11,7 @@ public class ElevatorUpCmd extends Command {
     ElevatorSubsystem m_elevator;
     double setpoint;
 
-    public ElevatorUpCmd(ElevatorSubsystem elevator, double setpoint){
+    public ElevatorUpCmd(ElevatorSubsystem elevator,double setpoint){
 
       this.m_elevator = elevator;
       this.setpoint = setpoint;

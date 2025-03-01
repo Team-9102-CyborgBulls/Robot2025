@@ -73,5 +73,9 @@ public final class Constants {
   public static final class ArmConstants {
 
     public static final double ENCODER_DEGREES = (1/152)*360;
+    public static final double ARM_DOWN_POSITION = 0.1; // a définir
+    public static final double ARM_UP_POSITION = 0; // a définir
+    public static final double ARM_90_POSITION = 80; // a définir
+
   }
 }

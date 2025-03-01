@@ -153,7 +153,7 @@ public class RobotContainer {
   );*/
     driveSubsystem.setDefaultCommand(driveCmd);
 
-    elevatorSubsystem.setDefaultCommand(elevatorStillCmd);
+    //elevatorSubsystem.setDefaultCommand(elevatorStillCmd);
 
     armSubsystem.setDefaultCommand(armStillCmd);
 

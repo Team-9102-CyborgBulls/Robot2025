@@ -4,6 +4,7 @@ package frc.robot.subsystems;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
+import com.google.flatbuffers.Constants;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 
@@ -43,4 +44,8 @@ public class ElevatorSubsystem extends SubsystemBase {
     public void resetElevatorEncoder(){
         elevatorEncoder.setPosition(0);
     }
+
+    /*public double  changeSetpointL2(){
+        return Constants.ElevatorConstants.ELEVATOR_L2_POSITION;
+    }*/
 }
