@@ -42,7 +42,7 @@ public class ElevatorUpCmd extends Command {
 
   @Override
   public boolean isFinished() {
-    if(m_elevator.getEncoderValue() >= Constants.ElevatorConstants.ELEVATOR_L3_POSITION + 3){
+    if(m_elevator.getEncoderValue() >= RobotContainer.setelevator + 3){
       return true;
     }else{
       return false;

@@ -39,6 +39,7 @@ import org.photonvision.PhotonCamera;
 
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.cscore.UsbCamera;
+import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -52,6 +53,7 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 
 
 public class RobotContainer {
+  boolean manuel = false;
   // The robot's subsystems and commands are defined here...
   public final static DriveSubsystem driveSubsystem = new DriveSubsystem();
   public final DriveCmd driveCmd = new DriveCmd(driveSubsystem);
@@ -65,13 +67,13 @@ public class RobotContainer {
   public final IntakeSubsystem intakeSubsystem = new IntakeSubsystem();
   public final IntakeUpCmd intakeUpCmd = new IntakeUpCmd(intakeSubsystem);
   public final IntakeDownCmd intakeDownCmd = new IntakeDownCmd(intakeSubsystem);
-  
 
-  double setpoint;
+  public static double setelevator = Constants.ElevatorConstants.ELEVATOR_L2_POSITION;
+  //public double setpoint = 24;
   public final ElevatorSubsystem elevatorSubsystem = new ElevatorSubsystem();
-  public final ElevatorDownCmd elevatorDownCmd = new ElevatorDownCmd(elevatorSubsystem,setpoint);
+  public final ElevatorDownCmd elevatorDownCmd = new ElevatorDownCmd(elevatorSubsystem,Constants.ElevatorConstants.ELEVATOR_DOWN_POSITION);
   public final ElevatorStillCmd elevatorStillCmd = new ElevatorStillCmd(elevatorSubsystem);
-  public final ElevatorUpCmd elevatorUpCmd = new ElevatorUpCmd(elevatorSubsystem,setpoint);
+  public final ElevatorUpCmd elevatorUpCmd = new ElevatorUpCmd(elevatorSubsystem,setelevator);
   
 
   public final ArmSubsystem armSubsystem = new ArmSubsystem();
@@ -91,6 +93,7 @@ public class RobotContainer {
 
   
   public static CommandXboxController manette = new CommandXboxController(0);
+  public static Joystick k_joystick = new Joystick(1);
   public static Timer m_timer = new Timer();
 
   public SendableChooser<Command> m_Chooser = new SendableChooser<Command>();
@@ -145,6 +148,8 @@ public class RobotContainer {
     Trigger RightButton = manette.povRight();
 
     Trigger startButton = manette.start();
+
+       
     
     
      
@@ -153,7 +158,7 @@ public class RobotContainer {
   );*/
     driveSubsystem.setDefaultCommand(driveCmd);
 
-    //elevatorSubsystem.setDefaultCommand(elevatorStillCmd);
+    elevatorSubsystem.setDefaultCommand(elevatorStillCmd);
 
     armSubsystem.setDefaultCommand(armStillCmd);
 
@@ -176,32 +181,63 @@ public class RobotContainer {
         .y()
         
         .whileTrue(driveSubsystem.sysIdDynamic(SysIdRoutine.Direction.kReverse));*/
+    if(manuel==false){
+      manette.a().whileTrue(new OutTakeCmd(outTakeSubsystem));
+      manette.b().onTrue(new IntakeDownCmd(intakeSubsystem));
 
-    manette.a().whileTrue(new OutTakeCmd(outTakeSubsystem));
-    manette.b().onTrue(new IntakeDownCmd(intakeSubsystem));
+      manette.y().whileTrue(new IntakeArmCmd(armSubsystem));
+      manette.x().whileTrue(new IntakeArmReverseCmd(armSubsystem));
 
-    manette.y().whileTrue(new IntakeArmCmd(armSubsystem));
-    manette.x().whileTrue(new IntakeArmReverseCmd(armSubsystem));
+      //UpButton.whileTrue(new InstantCommand(()-> driveSubsystem.driveRight(0.5))).whileFalse(new InstantCommand(()-> driveSubsystem.driveRight(0)));
+      //DownButton.whileTrue(new InstantCommand(()-> driveSubsystem.driveRightFollow(0.3))).whileFalse(new InstantCommand(()-> driveSubsystem.driveRightFollow(0)));
 
-    //UpButton.whileTrue(new InstantCommand(()-> driveSubsystem.driveRight(0.5))).whileFalse(new InstantCommand(()-> driveSubsystem.driveRight(0)));
-    //DownButton.whileTrue(new InstantCommand(()-> driveSubsystem.driveRightFollow(0.3))).whileFalse(new InstantCommand(()-> driveSubsystem.driveRightFollow(0)));
+      UpButton.onTrue(new ElevatorUpCmd(elevatorSubsystem,setelevator));
+      DownButton.onTrue(new ElevatorDownCmd(elevatorSubsystem,Constants.ElevatorConstants.ELEVATOR_DOWN_POSITION));
 
-    UpButton.onTrue(new ElevatorUpCmd(elevatorSubsystem, Constants.ElevatorConstants.ELEVATOR_L3_POSITION));
-    //manette.start().onTrue(new ElevatorUpCmd(elevatorSubsystem, Constants.ElevatorConstants.ELEVATOR_L2_POSITION));
-    DownButton.onTrue(new ElevatorDownCmd(elevatorSubsystem,Constants.ElevatorConstants.ELEVATOR_DOWN_POSITION));
+      LeftButton.whileTrue(new ArmUpCmd(armSubsystem));
+      RightButton.whileTrue(new ArmDownCmd(armSubsystem));
+      //LeftButton.whileTrue(new InstantCommand(()-> driveSubsystem.driveLeft(0.5))).whileFalse(new InstantCommand(()-> driveSubsystem.driveLeft(0)));
+      //RightButton.whileTrue(new InstantCommand(()-> driveSubsystem.driveLeftFollow(0.3))).whileFalse(new InstantCommand(()-> driveSubsystem.driveLeftFollow(0)));
 
-    manette.start().whileTrue(outTakeAlgueCmd);
+      rBumper.onTrue(new InstantCommand(() -> driveSubsystem.speedUp())); // Vitesse augmenté
+      lBumper.onTrue(new InstantCommand(() -> driveSubsystem.speedDown())); // vitesse baissé
+    }
+    else if (manuel == true){
+      manette.a().whileTrue(new OutTakeCmd(outTakeSubsystem));
+      manette.b().onTrue(new IntakeDownCmd(intakeSubsystem));
 
-    LeftButton.whileTrue(new ArmUpCmd(armSubsystem));
-    RightButton.whileTrue(new ArmDownCmd(armSubsystem));
-    //LeftButton.whileTrue(new InstantCommand(()-> driveSubsystem.driveLeft(0.5))).whileFalse(new InstantCommand(()-> driveSubsystem.driveLeft(0)));
-    //RightButton.whileTrue(new InstantCommand(()-> driveSubsystem.driveLeftFollow(0.3))).whileFalse(new InstantCommand(()-> driveSubsystem.driveLeftFollow(0)));
+      manette.y().whileTrue(new IntakeArmCmd(armSubsystem));
+      manette.x().whileTrue(new IntakeArmReverseCmd(armSubsystem));
 
-    rBumper.onTrue(new InstantCommand(() -> driveSubsystem.speedUp())); // Vitesse augmenté
-    lBumper.onTrue(new InstantCommand(() -> driveSubsystem.speedDown())); // vitesse baissé
+      //UpButton.whileTrue(new InstantCommand(()-> driveSubsystem.driveRight(0.5))).whileFalse(new InstantCommand(()-> driveSubsystem.driveRight(0)));
+      //DownButton.whileTrue(new InstantCommand(()-> driveSubsystem.driveRightFollow(0.3))).whileFalse(new InstantCommand(()-> driveSubsystem.driveRightFollow(0)));
 
-    
-    
+      UpButton.whileTrue(new ElevatorUpCmd(elevatorSubsystem,setelevator));
+      DownButton.whileTrue(new ElevatorDownCmd(elevatorSubsystem,Constants.ElevatorConstants.ELEVATOR_DOWN_POSITION));
+
+      LeftButton.whileTrue(new ArmUpCmd(armSubsystem));
+      RightButton.whileTrue(new ArmDownCmd(armSubsystem));
+      //LeftButton.whileTrue(new InstantCommand(()-> driveSubsystem.driveLeft(0.5))).whileFalse(new InstantCommand(()-> driveSubsystem.driveLeft(0)));
+      //RightButton.whileTrue(new InstantCommand(()-> driveSubsystem.driveLeftFollow(0.3))).whileFalse(new InstantCommand(()-> driveSubsystem.driveLeftFollow(0)));
+
+      rBumper.onTrue(new InstantCommand(() -> driveSubsystem.speedUp())); // Vitesse augmenté
+      lBumper.onTrue(new InstantCommand(() -> driveSubsystem.speedDown())); // vitesse baissé
+    }
+
+    if (k_joystick.getRawButtonPressed(7) == true){
+      System.out.println("debug");
+      setelevator = elevatorSubsystem.changesetpoint(setelevator);
+    }
+
+    if (k_joystick.getRawButtonPressed(8) == true){
+      System.out.println("deb");
+      if(manuel == false){
+        manuel = true;
+      }
+      else if(manuel == true){
+        manuel = false;
+      }
+    }
   
   }
 
