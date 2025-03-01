@@ -37,7 +37,7 @@ double setpoint;
     
     } else{
       m_armSubsytem.setArmMotor(speed);
-    }*/
+    }
     //m_armSubsytem.setArmMotor(0.2);
   }*/
   //double speed = 0.3 * Math.sin(m_armSubsytem.getEncoderArmValue());
@@ -49,7 +49,7 @@ double setpoint;
     if (m_armSubsytem.getEncoderArmValue() >= 155){
       return true;
     }
-    else if(m_armSubsytem.getEncoderArmValue() >= 47 && m_armSubsytem.getEncoderArmValue() <= 50){
+    else if(m_armSubsytem.getEncoderArmValue() >= 69 && m_armSubsytem.getEncoderArmValue() <= 70){
       return true;
     }
       return false;

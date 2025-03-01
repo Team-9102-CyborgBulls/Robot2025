@@ -12,6 +12,7 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import edu.wpi.first.math.MathUtil;
 
 public class ElevatorSubsystem extends SubsystemBase {
     
@@ -20,7 +21,9 @@ public class ElevatorSubsystem extends SubsystemBase {
     
     public RelativeEncoder elevatorEncoder = m_elevatorMotor.getEncoder();
 
-    public DutyCycleEncoder cypher = new DutyCycleEncoder(9);
+    public  double setelevator = Constants.ElevatorConstants.ELEVATOR_L2_POSITION;
+
+    
 
     public ElevatorSubsystem(){
 
@@ -40,17 +43,13 @@ public class ElevatorSubsystem extends SubsystemBase {
     }
 
     public double getEncoderValue(){
+        return (-elevatorEncoder.getPosition()/25)*(2*Math.PI*2.45);
+      }
+  
+      public void resetElevatorEncoder(){
+          elevatorEncoder.setPosition(0);
+      }
 
-        double cpt = 0;
-
-        if (cypher.get() >= 1){
-            cpt+=1;
-        }
-
-        double value = cpt + cypher.get();
-        
-        return value;
-    }
     public double changesetpoint(double elevation){
         if(elevation == Constants.ElevatorConstants.ELEVATOR_L2_POSITION){
             elevation = Constants.ElevatorConstants.ELEVATOR_L3_POSITION;

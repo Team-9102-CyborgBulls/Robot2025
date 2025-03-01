@@ -9,12 +9,13 @@ import frc.robot.subsystems.IntakeAlgueSubsystem;
 public class ElevatorUpCmd extends Command {
     
     ElevatorSubsystem m_elevator;
+    
     double setpoint;
 
-    public ElevatorUpCmd(ElevatorSubsystem elevator,double setpoint){
+    public ElevatorUpCmd(ElevatorSubsystem elevator){
 
       this.m_elevator = elevator;
-      this.setpoint = setpoint;
+      
       addRequirements(m_elevator);
     }
 
@@ -28,7 +29,7 @@ public class ElevatorUpCmd extends Command {
 
   @Override
   public void execute() {
-    double error = setpoint - m_elevator.getEncoderValue();
+    double error = m_elevator.setelevator - m_elevator.getEncoderValue();
     double speed = (Constants.ElevatorConstants.kp * error) + Constants.ElevatorConstants.kg;
 
     if(speed >= 0.8){
@@ -42,7 +43,7 @@ public class ElevatorUpCmd extends Command {
 
   @Override
   public boolean isFinished() {
-    if(m_elevator.getEncoderValue() >= RobotContainer.setelevator + 3){
+    if(m_elevator.getEncoderValue() >= m_elevator.setelevator ){
       return true;
     }else{
       return false;

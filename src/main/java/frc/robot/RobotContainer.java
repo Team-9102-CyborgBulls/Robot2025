@@ -19,8 +19,10 @@ import frc.robot.commands.DriveCmd.DriveCmd;
 import frc.robot.commands.DriveCmd.DriveForDistanceCmd;
 import frc.robot.commands.DriveCmd.TurnToAngleCmd;
 import frc.robot.commands.ElevatorCmd.ElevatorDownCmd;
+import frc.robot.commands.ElevatorCmd.ElevatorDownManualCmd;
 import frc.robot.commands.ElevatorCmd.ElevatorStillCmd;
 import frc.robot.commands.ElevatorCmd.ElevatorUpCmd;
+import frc.robot.commands.ElevatorCmd.ElevatorUpManualCmd;
 import frc.robot.commands.OutTakeCmd.OutTakeCmd;
 import frc.robot.commands.OutTakeCmd.OutTakeAlgueCmd;
 
@@ -67,17 +69,18 @@ public class RobotContainer {
   public final OutTakeCoralSubsystem outTakeSubsystem = new OutTakeCoralSubsystem();
   public final OutTakeCmd outTakeCmd = new OutTakeCmd(outTakeSubsystem);
 
-  public final IntakeAlgueSubsystem intakeSubsystem = new IntakeAlgueSubsystem();
-  public final IntakeAlgueCmd intakeUpCmd = new IntakeAlgueCmd(intakeSubsystem);
-  public final IntakeAlgueCmd intakeDownCmd = new IntakeAlgueCmd(intakeSubsystem);
+  public final IntakeAlgueSubsystem intakeAlgueSubsystem = new IntakeAlgueSubsystem();
+  public final IntakeAlgueCmd intakeUpCmd = new IntakeAlgueCmd(intakeAlgueSubsystem);
+  public final IntakeAlgueCmd intakeDownCmd = new IntakeAlgueCmd(intakeAlgueSubsystem);
 
-  public static double setelevator = Constants.ElevatorConstants.ELEVATOR_L2_POSITION;
+  //public  double setelevator = Constants.ElevatorConstants.ELEVATOR_L2_POSITION;
   //public double setpoint = 24;
   public final ElevatorSubsystem elevatorSubsystem = new ElevatorSubsystem();
   public final ElevatorDownCmd elevatorDownCmd = new ElevatorDownCmd(elevatorSubsystem,Constants.ElevatorConstants.ELEVATOR_DOWN_POSITION);
   public final ElevatorStillCmd elevatorStillCmd = new ElevatorStillCmd(elevatorSubsystem);
-  public final ElevatorUpCmd elevatorUpCmd = new ElevatorUpCmd(elevatorSubsystem,setelevator);
-  
+  public final ElevatorUpCmd elevatorUpCmd = new ElevatorUpCmd(elevatorSubsystem);
+  public final ElevatorDownManualCmd elevatorDownManualCmd = new ElevatorDownManualCmd(elevatorSubsystem);
+  public final ElevatorUpManualCmd elevatorUpManualCmd = new ElevatorUpManualCmd(elevatorSubsystem);
 
   public final ArmSubsystem armSubsystem = new ArmSubsystem();
   public final ArmDownCmd armDownCmd = new ArmDownCmd(armSubsystem);
@@ -179,39 +182,66 @@ public class RobotContainer {
         
         .whileTrue(driveSubsystem.sysIdDynamic(SysIdRoutine.Direction.kReverse));*/
 
-    manette.a().whileTrue(new OutTakeCmd(outTakeSubsystem));
-    manette.b().onTrue(new IntakeAlgueCmd(intakeSubsystem));
+      new JoystickButton(k_joystick, 8)
+        .onTrue(new InstantCommand(() -> {
+            
+            manuel = !manuel; // Inverse l'état de manuel (toggle)
+        }));
 
-    manette.x().onTrue(new OutTakeAlgueCmd(outTakeAlgueSubsystem));
+        new JoystickButton(k_joystick, 7)
+        .whileTrue(new InstantCommand(() -> {
+            
+            elevatorSubsystem.setelevator = elevatorSubsystem.changesetpoint(elevatorSubsystem.setelevator);
+        }));
+        new JoystickButton(k_joystick, 6)
+        .onTrue(new InstantCommand(() -> {
+          if(manuel){
+            System.out.println("manual");
+          }
+          else{
+            System.out.println("auto");
+          }
+        }));
+
+
+if (manuel){
+
+    System.out.println("a");
+    manette.a().whileTrue(new OutTakeCmd(outTakeSubsystem));
+    manette.b().onTrue(new IntakeAlgueCmd(intakeAlgueSubsystem));
+
+    manette.x().whileTrue(new OutTakeAlgueCmd(outTakeAlgueSubsystem));
 
     
     
     manette.back().whileTrue(new InstantCommand(()->driveSubsystem.reverse()));
   
-    UpButton.onTrue(new ElevatorUpCmd(elevatorSubsystem, Constants.ElevatorConstants.ELEVATOR_L3_POSITION));
-    //manette.start().onTrue(new ElevatorUpCmd(elevatorSubsystem, Constants.ElevatorConstants.ELEVATOR_L2_POSITION));
-    DownButton.onTrue(new ElevatorDownCmd(elevatorSubsystem,Constants.ElevatorConstants.ELEVATOR_DOWN_POSITION));
+    UpButton.whileTrue(new ElevatorUpManualCmd(elevatorSubsystem));
+    
+    DownButton.whileTrue(new ElevatorDownManualCmd(elevatorSubsystem));
 
       LeftButton.whileTrue(new ArmUpCmd(armSubsystem));
       RightButton.whileTrue(new ArmDownCmd(armSubsystem));
-      //LeftButton.whileTrue(new InstantCommand(()-> driveSubsystem.driveLeft(0.5))).whileFalse(new InstantCommand(()-> driveSubsystem.driveLeft(0)));
-      //RightButton.whileTrue(new InstantCommand(()-> driveSubsystem.driveLeftFollow(0.3))).whileFalse(new InstantCommand(()-> driveSubsystem.driveLeftFollow(0)));
-
+      
       rBumper.onTrue(new InstantCommand(() -> driveSubsystem.speedUp())); // Vitesse augmenté
       lBumper.onTrue(new InstantCommand(() -> driveSubsystem.speedDown())); // vitesse baissé
-    }
-    else if (manuel == true){
+    
+      
+
+      
+}    
+
+    else{
+      
       manette.a().whileTrue(new OutTakeCmd(outTakeSubsystem));
-      manette.b().onTrue(new IntakeDownCmd(intakeSubsystem));
+      manette.b().onTrue(new IntakeAlgueCmd(intakeAlgueSubsystem));
 
-      manette.y().whileTrue(new IntakeArmCmd(armSubsystem));
-      manette.x().whileTrue(new IntakeArmReverseCmd(armSubsystem));
+      manette.x().onTrue(new OutTakeAlgueCmd(outTakeAlgueSubsystem));
 
-      //UpButton.whileTrue(new InstantCommand(()-> driveSubsystem.driveRight(0.5))).whileFalse(new InstantCommand(()-> driveSubsystem.driveRight(0)));
-      //DownButton.whileTrue(new InstantCommand(()-> driveSubsystem.driveRightFollow(0.3))).whileFalse(new InstantCommand(()-> driveSubsystem.driveRightFollow(0)));
+      manette.back().whileTrue(new InstantCommand(()->driveSubsystem.reverse()));
 
-      UpButton.whileTrue(new ElevatorUpCmd(elevatorSubsystem,setelevator));
-      DownButton.whileTrue(new ElevatorDownCmd(elevatorSubsystem,Constants.ElevatorConstants.ELEVATOR_DOWN_POSITION));
+      UpButton.onTrue(new ElevatorUpCmd(elevatorSubsystem));
+      DownButton.onTrue(new ElevatorDownCmd(elevatorSubsystem,Constants.ElevatorConstants.ELEVATOR_DOWN_POSITION));
 
     LeftButton.onTrue(new ArmUpCmd(armSubsystem));
     RightButton.onTrue(new ArmDownCmd(armSubsystem));
@@ -220,10 +250,10 @@ public class RobotContainer {
     lBumper.onTrue(new InstantCommand(() -> driveSubsystem.speedDown())); // vitesse baissé
 
     
-    
+    }
   
   }
-  
+
   /**
    * 
    * Use this to pass the autonomous command to the main {@link Robot} class.
