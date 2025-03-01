@@ -21,6 +21,15 @@ public class GettingInRangeCmd extends Command {
     VisionSubsystem visionSubsystem;
     RobotContainer m_robotContainer;
     public double range;
+
+    double forwardSpeed = 0;
+    double turnSpeed = 0;
+    // Read in relevant data from the Camera
+    boolean targetVisible = false;
+    double targetYaw = 0.0;
+    double targetRange = 0.0;
+
+    double targetRange2;
   
     public GettingInRangeCmd(DriveSubsystem drivesubsystem, VisionSubsystem visionSubsystem){
 
@@ -33,17 +42,13 @@ public class GettingInRangeCmd extends Command {
 
     @Override
   public void initialize() {
+    
   }
 
   @Override
   public void execute() {
      
-    double forwardSpeed = 0;
-    double turnSpeed = 0;
-    // Read in relevant data from the Camera
-    boolean targetVisible = false;
-    double targetYaw = 0.0;
-    double targetRange = 0.0;
+    
     var results = visionSubsystem.photonCamera.getAllUnreadResults();
     if (!results.isEmpty()) {
         // Camera processed a new frame since last
@@ -61,7 +66,7 @@ public class GettingInRangeCmd extends Command {
                                      0.17, // 
                                     Units.degreesToRadians(0), // Measured with a protractor, or in CAD.
                                     Units.degreesToRadians(target.getPitch()));
-
+                    targetRange2 = target.getBestCameraToTarget().getX();
                     targetVisible = true;
                 }
             }
@@ -72,13 +77,28 @@ public class GettingInRangeCmd extends Command {
     SmartDashboard.putNumber("ForwardSpeed",forwardSpeed);
     SmartDashboard.putNumber("turnSpeed", turnSpeed);
     SmartDashboard.putNumber("targetRange",targetRange);
+    SmartDashboard.putNumber("targetRange2",targetRange2);
 
     if (targetVisible){
       
       turnSpeed = (0 - targetYaw) * 0.04;
-      forwardSpeed = (1.0 - targetRange) * 0.1;
-      driveSubsystem.arcadeDrive(forwardSpeed, turnSpeed);
+      forwardSpeed = - (1.0 - targetRange2) * 0.4;
+      
+      
     }
+    if(turnSpeed > 0.3){
+      turnSpeed = 0.3;
+    }
+    else if(turnSpeed < -0.3){
+    turnSpeed = -0.3;
+    }
+    if(forwardSpeed > 0.3){
+      forwardSpeed = 0.3;
+    }
+    else if(forwardSpeed < -0.3){
+    forwardSpeed = -0.3;
+    }
+    driveSubsystem.setDriveMotors(forwardSpeed, 0);
 
   }
   
@@ -92,6 +112,7 @@ public class GettingInRangeCmd extends Command {
 
   @Override
   public boolean isFinished() {
+    /*
     if(range > 0.8 && range < 1.2){
       System.out.println("c");
       return true;
@@ -99,6 +120,8 @@ public class GettingInRangeCmd extends Command {
     else{
       return false;
     }
+    */
     
+    return false;
 }
 }

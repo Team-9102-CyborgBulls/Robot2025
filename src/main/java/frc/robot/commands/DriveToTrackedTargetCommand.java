@@ -89,7 +89,7 @@ public class DriveToTrackedTargetCommand extends Command {
       double forwardDriveRate = limit(forwardValue, 0.6);
 
       // m_drivetrainSubsystem.driveCartesian(forwardDriveRate, strafeDriveRate, rotationDriveRate);
-      m_drivetrainSubsystem.arcadeDrive(forwardDriveRate, rotationDriveRate);
+      m_drivetrainSubsystem.setDriveMotors(forwardDriveRate, rotationDriveRate);
 
       // Print out all the variables for debugging
       // System.out.println("Distance: " + desiredDistanceToTarget);

@@ -71,7 +71,7 @@ public class DriveSubsystem extends SubsystemBase {
     SparkMax m_MotorRight = new SparkMax(4, MotorType.kBrushed);
     SparkMax m_MotorRightFollow = new SparkMax(3, MotorType.kBrushed);
     SparkMax m_MotorLeft = new SparkMax(1, MotorType.kBrushed);
-    SparkMax m_MotorLeftFollow = new SparkMax(2, MotorType.kBrushed);
+    SparkMax m_MotorLeftFollow = new SparkMax(10, MotorType.kBrushed);
 
     static SparkMaxConfig config = new SparkMaxConfig();
     public static AHRS gyro = new AHRS(NavXComType.kMXP_SPI);
@@ -320,9 +320,6 @@ public Command teleopDriveCommand(DoubleSupplier leftStickThrustSupplier,
 
     m_MotorRight.set(right);
     m_MotorLeft.set(left);
-
-    m_MotorRightFollow.set(right);
-    m_MotorLeftFollow.set(left);
   }
   public void stop(){
       m_MotorRight.set(0.0);
