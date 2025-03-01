@@ -48,6 +48,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 
@@ -149,8 +150,8 @@ public class RobotContainer {
 
     Trigger startButton = manette.start();
 
-       
-    
+    JoystickButton button1 = new JoystickButton(k_joystick, 1);
+    JoystickButton button2 = new JoystickButton(k_joystick, 2);
     
      
     /*driveSubsystem.setDefaultCommand(new InstantCommand(() -> 
@@ -223,21 +224,22 @@ public class RobotContainer {
       rBumper.onTrue(new InstantCommand(() -> driveSubsystem.speedUp())); // Vitesse augmenté
       lBumper.onTrue(new InstantCommand(() -> driveSubsystem.speedDown())); // vitesse baissé
     }
+    
 
     if (k_joystick.getRawButtonPressed(7) == true){
       System.out.println("debug");
       setelevator = elevatorSubsystem.changesetpoint(setelevator);
     }
 
-    if (k_joystick.getRawButtonPressed(8) == true){
-      System.out.println("deb");
-      if(manuel == false){
-        manuel = true;
-      }
-      else if(manuel == true){
-        manuel = false;
-      }
-    }
+    button1.onTrue(new InstantCommand(() -> {
+      System.out.println("debug");
+      setelevator = elevatorSubsystem.changesetpoint(setelevator);}));
+
+      button2.onTrue(new InstantCommand(() -> {
+        System.out.println("deb");
+        manuel = !manuel; // Inverse l'état de manuel (toggle)
+    }));
+    
   
   }
 
@@ -252,3 +254,4 @@ public class RobotContainer {
     return m_Chooser.getSelected();
 }
 }
+
