@@ -7,13 +7,11 @@ package frc.robot;
 
 import frc.robot.commands.AutoCmd.Auto1CoralM;
 import frc.robot.commands.GettingInRangeCmd;
+import frc.robot.commands.IntakeAlgueCmd;
 import frc.robot.commands.NothingCmd;
-import frc.robot.commands.OutTakeAlgueCmd;
-import frc.robot.commands.OutTakeCmd;
 import frc.robot.commands.ArmCmd.ArmDownCmd;
 import frc.robot.commands.ArmCmd.ArmUpCmd;
-import frc.robot.commands.ArmCmd.IntakeArmCmd;
-import frc.robot.commands.ArmCmd.IntakeArmReverseCmd;
+
 import frc.robot.commands.ArmCmd.ArmStillCmd;
 import frc.robot.commands.AutoCmd.Auto1CoralL;
 import frc.robot.commands.AutoCmd.Auto1CoralR;
@@ -23,14 +21,15 @@ import frc.robot.commands.DriveCmd.TurnToAngleCmd;
 import frc.robot.commands.ElevatorCmd.ElevatorDownCmd;
 import frc.robot.commands.ElevatorCmd.ElevatorStillCmd;
 import frc.robot.commands.ElevatorCmd.ElevatorUpCmd;
-import frc.robot.commands.IntakeCmd.IntakeDownCmd;
-import frc.robot.commands.IntakeCmd.IntakeUpCmd;
+import frc.robot.commands.OutTakeCmd.OutTakeCmd;
+import frc.robot.commands.OutTakeCmd.OutTakeAlgueCmd;
+
 import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.ElevatorSubsystem;
-import frc.robot.subsystems.IntakeSubsystem;
+import frc.robot.subsystems.IntakeAlgueSubsystem;
 import frc.robot.subsystems.OutTakeAlgueSubsystem;
-import frc.robot.subsystems.OutTakeSubsystem;
+import frc.robot.subsystems.OutTakeCoralSubsystem;
 import frc.robot.subsystems.VisionSubsystem;
 
 import java.util.function.DoubleSupplier;
@@ -39,6 +38,7 @@ import org.photonvision.PhotonCamera;
 
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.cscore.UsbCamera;
+import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -51,7 +51,8 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+
+
 
 
 public class RobotContainer {
@@ -63,12 +64,12 @@ public class RobotContainer {
   public final static VisionSubsystem visionsubsystem = new VisionSubsystem();
   public final GettingInRangeCmd gettinginrange = new GettingInRangeCmd(driveSubsystem, visionsubsystem);
 
-  public final OutTakeSubsystem outTakeSubsystem = new OutTakeSubsystem();
+  public final OutTakeCoralSubsystem outTakeSubsystem = new OutTakeCoralSubsystem();
   public final OutTakeCmd outTakeCmd = new OutTakeCmd(outTakeSubsystem);
 
-  public final IntakeSubsystem intakeSubsystem = new IntakeSubsystem();
-  public final IntakeUpCmd intakeUpCmd = new IntakeUpCmd(intakeSubsystem);
-  public final IntakeDownCmd intakeDownCmd = new IntakeDownCmd(intakeSubsystem);
+  public final IntakeAlgueSubsystem intakeSubsystem = new IntakeAlgueSubsystem();
+  public final IntakeAlgueCmd intakeUpCmd = new IntakeAlgueCmd(intakeSubsystem);
+  public final IntakeAlgueCmd intakeDownCmd = new IntakeAlgueCmd(intakeSubsystem);
 
   public static double setelevator = Constants.ElevatorConstants.ELEVATOR_L2_POSITION;
   //public double setpoint = 24;
@@ -82,18 +83,15 @@ public class RobotContainer {
   public final ArmDownCmd armDownCmd = new ArmDownCmd(armSubsystem);
   public final ArmUpCmd armUpCmd = new ArmUpCmd(armSubsystem);
   public final ArmStillCmd armStillCmd = new ArmStillCmd(armSubsystem);
-  public final IntakeArmCmd intakeArmCmd = new IntakeArmCmd(armSubsystem);
-  public final IntakeArmReverseCmd intakeArmReverseCmd = new IntakeArmReverseCmd(armSubsystem);
-
-  public final OutTakeAlgueSubsystem OutTakeAlgueSubsystem = new OutTakeAlgueSubsystem();
-  public final OutTakeAlgueCmd outTakeAlgueCmd = new OutTakeAlgueCmd(OutTakeAlgueSubsystem);
+  
+  
+  public final OutTakeAlgueSubsystem outTakeAlgueSubsystem = new OutTakeAlgueSubsystem();
+  public final OutTakeAlgueCmd outTakeAlgueCmd = new OutTakeAlgueCmd(outTakeAlgueSubsystem);
+  
   
   public UsbCamera drivercamera = CameraServer.startAutomaticCapture();
+  public PhotonCamera camera = new PhotonCamera("photonvision");
 
-   public PhotonCamera camera = new PhotonCamera("photonvision");
-
-
-  
   public static CommandXboxController manette = new CommandXboxController(0);
   public static Joystick k_joystick = new Joystick(1);
   public static Timer m_timer = new Timer();
@@ -154,15 +152,12 @@ public class RobotContainer {
     JoystickButton button1 = new JoystickButton(k_joystick, 1);
     JoystickButton button2 = new JoystickButton(k_joystick, 2);
     
-     
-    /*driveSubsystem.setDefaultCommand(new InstantCommand(() -> 
-      driveSubsystem.teleopDriveCommand(() -> manette.getLeftY(),() -> manette.getRightX()), driveSubsystem)
-  );*/
+    
     driveSubsystem.setDefaultCommand(driveCmd);
 
     elevatorSubsystem.setDefaultCommand(elevatorStillCmd);
 
-    armSubsystem.setDefaultCommand(armStillCmd);
+    //armSubsystem.setDefaultCommand(armStillCmd);
 
     //intakeSubsystem.setDefaultCommand(intakeUpCmd);
         
@@ -183,18 +178,19 @@ public class RobotContainer {
         .y()
         
         .whileTrue(driveSubsystem.sysIdDynamic(SysIdRoutine.Direction.kReverse));*/
-    if(manuel==false){
-      manette.a().whileTrue(new OutTakeCmd(outTakeSubsystem));
-      manette.b().onTrue(new IntakeDownCmd(intakeSubsystem));
 
-      manette.y().whileTrue(new IntakeArmCmd(armSubsystem));
-      manette.x().whileTrue(new IntakeArmReverseCmd(armSubsystem));
+    manette.a().whileTrue(new OutTakeCmd(outTakeSubsystem));
+    manette.b().onTrue(new IntakeAlgueCmd(intakeSubsystem));
 
-      //UpButton.whileTrue(new InstantCommand(()-> driveSubsystem.driveRight(0.5))).whileFalse(new InstantCommand(()-> driveSubsystem.driveRight(0)));
-      //DownButton.whileTrue(new InstantCommand(()-> driveSubsystem.driveRightFollow(0.3))).whileFalse(new InstantCommand(()-> driveSubsystem.driveRightFollow(0)));
+    manette.x().onTrue(new OutTakeAlgueCmd(outTakeAlgueSubsystem));
 
-      UpButton.onTrue(new ElevatorUpCmd(elevatorSubsystem,setelevator));
-      DownButton.onTrue(new ElevatorDownCmd(elevatorSubsystem,Constants.ElevatorConstants.ELEVATOR_DOWN_POSITION));
+    
+    
+    manette.back().whileTrue(new InstantCommand(()->driveSubsystem.reverse()));
+  
+    UpButton.onTrue(new ElevatorUpCmd(elevatorSubsystem, Constants.ElevatorConstants.ELEVATOR_L3_POSITION));
+    //manette.start().onTrue(new ElevatorUpCmd(elevatorSubsystem, Constants.ElevatorConstants.ELEVATOR_L2_POSITION));
+    DownButton.onTrue(new ElevatorDownCmd(elevatorSubsystem,Constants.ElevatorConstants.ELEVATOR_DOWN_POSITION));
 
       LeftButton.whileTrue(new ArmUpCmd(armSubsystem));
       RightButton.whileTrue(new ArmDownCmd(armSubsystem));
@@ -217,28 +213,13 @@ public class RobotContainer {
       UpButton.whileTrue(new ElevatorUpCmd(elevatorSubsystem,setelevator));
       DownButton.whileTrue(new ElevatorDownCmd(elevatorSubsystem,Constants.ElevatorConstants.ELEVATOR_DOWN_POSITION));
 
-      LeftButton.whileTrue(new ArmUpCmd(armSubsystem));
-      RightButton.whileTrue(new ArmDownCmd(armSubsystem));
-      //LeftButton.whileTrue(new InstantCommand(()-> driveSubsystem.driveLeft(0.5))).whileFalse(new InstantCommand(()-> driveSubsystem.driveLeft(0)));
-      //RightButton.whileTrue(new InstantCommand(()-> driveSubsystem.driveLeftFollow(0.3))).whileFalse(new InstantCommand(()-> driveSubsystem.driveLeftFollow(0)));
+    LeftButton.onTrue(new ArmUpCmd(armSubsystem));
+    RightButton.onTrue(new ArmDownCmd(armSubsystem));
+    
+    rBumper.onTrue(new InstantCommand(() -> driveSubsystem.speedUp())); // Vitesse augmenté
+    lBumper.onTrue(new InstantCommand(() -> driveSubsystem.speedDown())); // vitesse baissé
 
-      rBumper.onTrue(new InstantCommand(() -> driveSubsystem.speedUp())); // Vitesse augmenté
-      lBumper.onTrue(new InstantCommand(() -> driveSubsystem.speedDown())); // vitesse baissé
-    }
-
-    if (k_joystick.getRawButtonPressed(7) == true){
-      System.out.println("debug");
-      setelevator = elevatorSubsystem.changesetpoint(setelevator);
-    }
-
-    button1.onTrue(new InstantCommand(() -> {
-      System.out.println("debug");
-      setelevator = elevatorSubsystem.changesetpoint(setelevator);}));
-
-      button2.onTrue(new InstantCommand(() -> {
-        System.out.println("deb");
-        manuel = !manuel; // Inverse l'état de manuel (toggle)
-    }));
+    
     
   
   }

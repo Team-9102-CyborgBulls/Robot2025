@@ -1,6 +1,7 @@
 
 package frc.robot.subsystems;
 
+import frc.robot.Constants;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
@@ -14,7 +15,7 @@ import frc.robot.Constants;
 
 public class ElevatorSubsystem extends SubsystemBase {
     
-    SparkMax m_elevatorMotor = new SparkMax(5, MotorType.kBrushless);
+    SparkMax m_elevatorMotor = new SparkMax(Constants.CANIdConstants.ID_MOTEUR_ELEVATOR, MotorType.kBrushless);
     static SparkMaxConfig configElevator = new SparkMaxConfig();
     
     public RelativeEncoder elevatorEncoder = m_elevatorMotor.getEncoder();

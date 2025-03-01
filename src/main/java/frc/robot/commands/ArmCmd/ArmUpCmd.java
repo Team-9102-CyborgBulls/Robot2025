@@ -28,8 +28,8 @@ double setpoint;
   @Override
   public void execute() {
     
-    //double error = setpoint - m_armSubsytem.getEncoderArmValue();
-    //double speed = ( 0.01 * error) + 0.2*Math.sin(m_armSubsytem.getEncoderArmValue());
+    /*double error = setpoint - m_armSubsytem.getEncoderArmValue();
+    double speed = ( 0.01 * error) + 0.2*Math.sin(m_armSubsytem.getEncoderArmValue());
     
     
     /*if(speed >= 0.3){
@@ -39,13 +39,20 @@ double setpoint;
       m_armSubsytem.setArmMotor(speed);
     }*/
     //m_armSubsytem.setArmMotor(0.2);
+  }*/
+  //double speed = 0.3 * Math.sin(m_armSubsytem.getEncoderArmValue());
+    m_armSubsytem.setArmMotor(0.3);
   }
 
   @Override
   public boolean isFinished() {
-    
-    
-    return false;
+    if (m_armSubsytem.getEncoderArmValue() >= 155){
+      return true;
+    }
+    else if(m_armSubsytem.getEncoderArmValue() >= 47 && m_armSubsytem.getEncoderArmValue() <= 50){
+      return true;
+    }
+      return false;
   }
   
 

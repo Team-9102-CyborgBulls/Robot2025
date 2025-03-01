@@ -7,15 +7,16 @@ import com.revrobotics.spark.SparkLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
 
-public class OutTakeSubsystem extends SubsystemBase {
+public class OutTakeCoralSubsystem extends SubsystemBase {
     
-    SparkMax m_outTakeMotor = new SparkMax(9, MotorType.kBrushless);
+    SparkMax m_outTakeMotor = new SparkMax(Constants.CANIdConstants.ID_MOTEUR_OUTTAKE_CORAL, MotorType.kBrushless);
     static SparkMaxConfig configOut = new SparkMaxConfig();
     public DigitalInput intake_sensor = new DigitalInput(8);
     
 
-    public OutTakeSubsystem(){
+    public OutTakeCoralSubsystem(){
 
         configOut.voltageCompensation(12);
         configOut.smartCurrentLimit(40);
