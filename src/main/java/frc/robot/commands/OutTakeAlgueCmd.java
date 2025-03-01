@@ -26,7 +26,7 @@ public class OutTakeAlgueCmd extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    m_outTakeAlgue.setOutTakeAlgueMotor(0.1);
+    m_outTakeAlgue.setOutTakeAlgueMotor(0.6);
   }
 
   // Called once the command ends or is interrupted.
@@ -38,11 +38,12 @@ public class OutTakeAlgueCmd extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    if(m_outTakeAlgue.limitSwitchActivated()){
+    /*if(m_outTakeAlgue.limitSwitchActivated()){
       return true;
     }
     else{
       return false;
-    }
+    }*/
+    return false;
   }
 }
