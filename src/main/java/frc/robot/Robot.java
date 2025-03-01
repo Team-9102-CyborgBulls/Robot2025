@@ -34,7 +34,7 @@ public class Robot extends TimedRobot {
 
     SmartDashboard.putData(m_robotContainer.driveSubsystem.gyro);
 
-    m_robotContainer.elevatorSubsystem.resetElevatorEncoder();
+    //m_robotContainer.elevatorSubsystem.resetElevatorEncoder();
     
   }
 
@@ -65,6 +65,7 @@ public class Robot extends TimedRobot {
    // SmartDashboard.putNumber("left y",m_robotContainer.leftY);
     CommandScheduler.getInstance().run();
     SmartDashboard.putBoolean("intake sensor",m_robotContainer.outTakeSubsystem.intake_sensor.get());
+    SmartDashboard.putNumber("setpoint", m_robotContainer.setpoint);
        
     //m_robotContainer.driveSubsystem.setFollowers();
 
@@ -77,7 +78,7 @@ public class Robot extends TimedRobot {
     m_autonomousCommand = m_robotContainer.getAutonomousCommand();
     m_robotContainer.driveSubsystem.zeroHeading();
     m_robotContainer.driveSubsystem.resetEncoders();
-    m_robotContainer.elevatorSubsystem.resetElevatorEncoder();
+    //m_robotContainer.elevatorSubsystem.resetElevatorEncoder();
 
     // schedule the autonomous command (example)
     if (m_autonomousCommand != null) {
@@ -100,7 +101,7 @@ public class Robot extends TimedRobot {
     }
     m_robotContainer.driveSubsystem.zeroHeading();
     m_robotContainer.driveSubsystem.resetEncoders();
-    m_robotContainer.elevatorSubsystem.resetElevatorEncoder();
+    //m_robotContainer.elevatorSubsystem.resetElevatorEncoder();
   }
 
   /** This function is called periodically during operator control. */

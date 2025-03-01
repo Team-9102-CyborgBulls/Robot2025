@@ -32,12 +32,12 @@ double setpoint;
     //double speed = ( 0.01 * error) + 0.2*Math.sin(m_armSubsytem.getEncoderArmValue());
     
     
-    if(speed >= 0.3){
+    /*if(speed >= 0.3){
       m_armSubsytem.setArmMotor(0.3);;
     
     } else{
       m_armSubsytem.setArmMotor(speed);
-    }
+    }*/
     //m_armSubsytem.setArmMotor(0.2);
   }
 
