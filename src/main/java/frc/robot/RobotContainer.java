@@ -48,6 +48,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 
@@ -149,7 +150,7 @@ public class RobotContainer {
 
     Trigger startButton = manette.start();
 
-       
+    
     
     
      
@@ -224,13 +225,16 @@ public class RobotContainer {
       lBumper.onTrue(new InstantCommand(() -> driveSubsystem.speedDown())); // vitesse baissé
     }
 
-    if (k_joystick.getRawButtonPressed(7) == true){
+    //setelevator = new JoystickButton(k_joystick, 7).onTrue(new InstantCommand(() -> elevatorSubsystem.changesetpoint(setelevator)));
+    if (k_joystick.getRawButtonPressed(7)){
       System.out.println("debug");
       setelevator = elevatorSubsystem.changesetpoint(setelevator);
     }
 
-    if (k_joystick.getRawButtonPressed(8) == true){
-      System.out.println("deb");
+    //new JoystickButton(k_joystick, 8);
+    //hello guys
+    if (k_joystick.getRawButtonPressed(8)){
+      System.out.println("debog");
       if(manuel == false){
         manuel = true;
       }
@@ -240,7 +244,7 @@ public class RobotContainer {
     }
   
   }
-
+  
   /**
    * 
    * Use this to pass the autonomous command to the main {@link Robot} class.
