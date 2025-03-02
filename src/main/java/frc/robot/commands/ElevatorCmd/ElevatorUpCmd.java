@@ -43,7 +43,7 @@ public class ElevatorUpCmd extends Command {
 
   @Override
   public boolean isFinished() {
-    if(m_elevator.getEncoderValue() >= m_elevator.setelevator ){
+    if(m_elevator.getEncoderValue() >= m_elevator.setelevator - 1 ){
       return true;
     }else{
       return false;

@@ -139,7 +139,7 @@ public DriveSubsystem() {
     
   config.voltageCompensation(12);
   config.smartCurrentLimit(40);
-  config.idleMode(IdleMode.kCoast);
+  config.idleMode(IdleMode.kBrake);
 
   config.follow(m_MotorRight);
   m_MotorRightFollow.configure(config,ResetMode.kResetSafeParameters,PersistMode.kPersistParameters);
@@ -333,19 +333,19 @@ public DriveSubsystem() {
     }
 
     public double getRightPosition(){
-      return encoderDriveR.get();
+      return -encoderDriveR.get();
     }
     
     public double getLeftPosition(){
-      return encoderDriveL.get();
+      return -encoderDriveL.get();
     }
     
     public double getRightDistance(){
-      return encoderDriveR.getDistance();
+      return -encoderDriveR.getDistance();
     }
     
     public double getLeftDistance(){
-      return encoderDriveL.getDistance();
+      return -encoderDriveL.getDistance();
     }
     
     public void resetEncoders() {

@@ -25,7 +25,7 @@ import frc.robot.commands.ElevatorCmd.ElevatorUpCmd;
 import frc.robot.commands.ElevatorCmd.ElevatorUpManualCmd;
 import frc.robot.commands.OutTakeCmd.OutTakeCmd;
 import frc.robot.commands.OutTakeCmd.OutTakeAlgueCmd;
-
+import frc.robot.commands.OutTakeCmd.OutTakeAutoCmd;
 import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.ElevatorSubsystem;
@@ -66,8 +66,9 @@ public class RobotContainer {
   public final static VisionSubsystem visionsubsystem = new VisionSubsystem();
   public final GettingInRangeCmd gettinginrange = new GettingInRangeCmd(driveSubsystem, visionsubsystem);
 
-  public final OutTakeCoralSubsystem outTakeSubsystem = new OutTakeCoralSubsystem();
+  public final static OutTakeCoralSubsystem outTakeSubsystem = new OutTakeCoralSubsystem();
   public final OutTakeCmd outTakeCmd = new OutTakeCmd(outTakeSubsystem);
+
 
   public final IntakeAlgueSubsystem intakeAlgueSubsystem = new IntakeAlgueSubsystem();
   public final IntakeAlgueCmd intakeUpCmd = new IntakeAlgueCmd(intakeAlgueSubsystem);
@@ -75,8 +76,8 @@ public class RobotContainer {
 
   //public  double setelevator = Constants.ElevatorConstants.ELEVATOR_L2_POSITION;
   //public double setpoint = 24;
-  public final ElevatorSubsystem elevatorSubsystem = new ElevatorSubsystem();
-  public final ElevatorDownCmd elevatorDownCmd = new ElevatorDownCmd(elevatorSubsystem,Constants.ElevatorConstants.ELEVATOR_DOWN_POSITION);
+  public final static ElevatorSubsystem elevatorSubsystem = new ElevatorSubsystem();
+  public final ElevatorDownCmd elevatorDownCmd = new ElevatorDownCmd(elevatorSubsystem);
   public final ElevatorStillCmd elevatorStillCmd = new ElevatorStillCmd(elevatorSubsystem);
   public final ElevatorUpCmd elevatorUpCmd = new ElevatorUpCmd(elevatorSubsystem);
   public final ElevatorDownManualCmd elevatorDownManualCmd = new ElevatorDownManualCmd(elevatorSubsystem);
@@ -236,12 +237,12 @@ if (manuel){
       manette.a().whileTrue(new OutTakeCmd(outTakeSubsystem));
       manette.b().onTrue(new IntakeAlgueCmd(intakeAlgueSubsystem));
 
-      manette.x().onTrue(new OutTakeAlgueCmd(outTakeAlgueSubsystem));
+      manette.x().whileTrue(new OutTakeAlgueCmd(outTakeAlgueSubsystem));
 
       manette.back().whileTrue(new InstantCommand(()->driveSubsystem.reverse()));
 
       UpButton.onTrue(new ElevatorUpCmd(elevatorSubsystem));
-      DownButton.onTrue(new ElevatorDownCmd(elevatorSubsystem,Constants.ElevatorConstants.ELEVATOR_DOWN_POSITION));
+      DownButton.onTrue(new ElevatorDownCmd(elevatorSubsystem));
 
     LeftButton.onTrue(new ArmUpCmd(armSubsystem));
     RightButton.onTrue(new ArmDownCmd(armSubsystem));

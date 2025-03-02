@@ -31,7 +31,7 @@ public class DriveForDistanceCmd extends Command {
   public void initialize() {
     
     m_DriveSubsystem.resetEncoders();
-    initialDistance = m_DriveSubsystem.getAverageEncoderDistance();
+    initialDistance = -m_DriveSubsystem.getAverageEncoderDistance();
     System.out.println("INITIAL DISTANCE: " + initialDistance);
     this.targetDistance = initialDistance + distance;
     
@@ -42,7 +42,7 @@ public class DriveForDistanceCmd extends Command {
   public void execute() {
 
     double kP = 1;
-    double currentPosition = m_DriveSubsystem.getAverageEncoderDistance();
+    double currentPosition = -m_DriveSubsystem.getAverageEncoderDistance();
     error = targetDistance - currentPosition;
     double speed =  kP * error;
 
@@ -57,7 +57,7 @@ public class DriveForDistanceCmd extends Command {
     }
     // Print statements for debugging
     System.out.println("GOAL DISTANCE: " + (distance + initialDistance));
-    System.out.println("CURRENT DISTANCE: " + m_DriveSubsystem.getAverageEncoderDistance());
+    System.out.println("CURRENT DISTANCE: " + -m_DriveSubsystem.getAverageEncoderDistance());
     System.out.println("POWER: " + percentPower);
   }
 
@@ -71,13 +71,13 @@ public class DriveForDistanceCmd extends Command {
   @Override
   public boolean isFinished() {
     
-    if(error >= 0 && error <= 0.01){
+    if(error >= 0 && error <= 0.3){
       finCmd = true;
       return true;
       
       
     }
-    else if(error <= 0 && error >= -0.01){
+    else if(error <= 0 && error >= -0.3){
       finCmd = true;
       return true;
       

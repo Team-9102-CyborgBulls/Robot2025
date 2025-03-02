@@ -12,7 +12,7 @@ public class ElevatorDownCmd extends Command{
     ElevatorSubsystem m_elevator;
     double setpoint;
 
-    public ElevatorDownCmd(ElevatorSubsystem elevator,double setpoint){
+    public ElevatorDownCmd(ElevatorSubsystem elevator){
 
       this.m_elevator = elevator;
       this.setpoint = setpoint;
@@ -30,7 +30,7 @@ public class ElevatorDownCmd extends Command{
   @Override
   public void execute() {
 
-    double error = setpoint - m_elevator.getEncoderValue();
+    double error = Constants.ElevatorConstants.ELEVATOR_DOWN_POSITION - m_elevator.getEncoderValue();
     double speed = (Constants.ElevatorConstants.kp * error) + Constants.ElevatorConstants.kg;
 
     if(speed <= -0.7){
@@ -42,7 +42,7 @@ public class ElevatorDownCmd extends Command{
 
   @Override
   public boolean isFinished() {
-    if(m_elevator.getEncoderValue() <= Constants.ElevatorConstants.ELEVATOR_DOWN_POSITION){
+    if(m_elevator.getEncoderValue() <= Constants.ElevatorConstants.ELEVATOR_DOWN_POSITION + 1){
       return true;
     }else{
       return false;
