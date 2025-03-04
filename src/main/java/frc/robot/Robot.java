@@ -66,7 +66,9 @@ public class Robot extends TimedRobot {
     CommandScheduler.getInstance().run();
     SmartDashboard.putBoolean("intake sensor",m_robotContainer.outTakeSubsystem.intake_sensor.get());
     SmartDashboard.putNumber("setpoint", m_robotContainer.elevatorSubsystem.setelevator);
-    SmartDashboard.putBoolean("manuelle", m_robotContainer.manuel);
+    SmartDashboard.putBoolean("manuel", m_robotContainer.useManette1);
+
+    SmartDashboard.putBoolean("lastState", m_robotContainer.lastButtonState);
        
     //m_robotContainer.driveSubsystem.setFollowers();
 

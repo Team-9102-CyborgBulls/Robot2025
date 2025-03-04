@@ -41,6 +41,7 @@ import org.photonvision.PhotonCamera;
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.cscore.UsbCamera;
 import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.PS4Controller;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -58,7 +59,9 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 
 
 public class RobotContainer {
-  boolean manuel = false;
+
+  public boolean useManette1 = false;
+  public boolean lastButtonState = false; // Pour détecter l’appui du bouton
   // The robot's subsystems and commands are defined here...
   public final static DriveSubsystem driveSubsystem = new DriveSubsystem();
   public final DriveCmd driveCmd = new DriveCmd(driveSubsystem);
@@ -98,6 +101,7 @@ public class RobotContainer {
 
   public static CommandXboxController manette = new CommandXboxController(0);
   public static Joystick k_joystick = new Joystick(1);
+  public static CommandXboxController manette2 = new CommandXboxController(2);
   public static Timer m_timer = new Timer();
 
   public SendableChooser<Command> m_Chooser = new SendableChooser<Command>();
@@ -155,6 +159,17 @@ public class RobotContainer {
 
     JoystickButton button1 = new JoystickButton(k_joystick, 1);
     JoystickButton button2 = new JoystickButton(k_joystick, 2);
+
+    Trigger UpButton2 = manette2.povUp();
+    Trigger DownButton2 = manette2.povDown();
+    Trigger LeftButton2 = manette2.povLeft();
+    Trigger RightButton2 = manette2.povRight();
+
+    Trigger rBumper2 = manette2.rightBumper();
+    Trigger lBumper2 = manette2.leftBumper();
+
+
+
     
     
     driveSubsystem.setDefaultCommand(driveCmd);
@@ -165,95 +180,64 @@ public class RobotContainer {
 
     //intakeSubsystem.setDefaultCommand(intakeUpCmd);
         
+    
 
-    /*manette
-        .a()
-        
-        .whileTrue(driveSubsystem.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
-    manette
-        .b()
-        
-        .whileTrue(driveSubsystem.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
-    manette
-        .x()
-        
-        .whileTrue(driveSubsystem.sysIdDynamic(SysIdRoutine.Direction.kForward));
-    manette
-        .y()
-        
-        .whileTrue(driveSubsystem.sysIdDynamic(SysIdRoutine.Direction.kReverse));*/
-
-      new JoystickButton(k_joystick, 8)
+     /*  new JoystickButton(k_joystick, 8)
         .onTrue(new InstantCommand(() -> {
             
             manuel = !manuel; // Inverse l'état de manuel (toggle)
         }));
-
+      */
         new JoystickButton(k_joystick, 7)
         .whileTrue(new InstantCommand(() -> {
             
             elevatorSubsystem.setelevator = elevatorSubsystem.changesetpoint(elevatorSubsystem.setelevator);
         }));
-        new JoystickButton(k_joystick, 6)
-        .onTrue(new InstantCommand(() -> {
-          if(manuel){
-            System.out.println("manual");
-          }
-          else{
-            System.out.println("auto");
-          }
-        }));
+       
 
 
-if (manuel){
+  manette.a().whileTrue(new OutTakeCmd(outTakeSubsystem));
+  manette.b().onTrue(new IntakeAlgueCmd(intakeAlgueSubsystem));
 
-    System.out.println("a");
-    manette.a().whileTrue(new OutTakeCmd(outTakeSubsystem));
-    manette.b().onTrue(new IntakeAlgueCmd(intakeAlgueSubsystem));
+  manette.x().whileTrue(new OutTakeAlgueCmd(outTakeAlgueSubsystem));
 
-    manette.x().whileTrue(new OutTakeAlgueCmd(outTakeAlgueSubsystem));
+  manette.back().whileTrue(new InstantCommand(()->driveSubsystem.reverse()));
+
+  UpButton.onTrue(new ElevatorUpCmd(elevatorSubsystem));
+  DownButton.onTrue(new ElevatorDownCmd(elevatorSubsystem));
+
+  LeftButton.onTrue(new ArmUpCmd(armSubsystem));
+  RightButton.onTrue(new ArmDownCmd(armSubsystem));
+
+  rBumper.onTrue(new InstantCommand(() -> driveSubsystem.speedUp())); // Vitesse augmenté
+  lBumper.onTrue(new InstantCommand(() -> driveSubsystem.speedDown())); // vitesse baissé
+    
+    
+
+    
+      
+     
+  manette2.a().whileTrue(new OutTakeCmd(outTakeSubsystem));
+  manette2.b().onTrue(new IntakeAlgueCmd(intakeAlgueSubsystem));
+
+  manette2.x().whileTrue(new OutTakeAlgueCmd(outTakeAlgueSubsystem));
 
     
     
-    manette.back().whileTrue(new InstantCommand(()->driveSubsystem.reverse()));
+  manette2.back().whileTrue(new InstantCommand(()->driveSubsystem.reverse()));
   
-    UpButton.whileTrue(new ElevatorUpManualCmd(elevatorSubsystem));
-    
-    DownButton.whileTrue(new ElevatorDownManualCmd(elevatorSubsystem));
+  UpButton2.whileTrue(new ElevatorUpManualCmd(elevatorSubsystem));
+  DownButton2.whileTrue(new ElevatorDownManualCmd(elevatorSubsystem));
 
-      LeftButton.whileTrue(new ArmUpCmd(armSubsystem));
-      RightButton.whileTrue(new ArmDownCmd(armSubsystem));
+  LeftButton2.whileTrue(new ArmUpCmd(armSubsystem));
+  RightButton2.whileTrue(new ArmDownCmd(armSubsystem));
       
-      rBumper.onTrue(new InstantCommand(() -> driveSubsystem.speedUp())); // Vitesse augmenté
-      lBumper.onTrue(new InstantCommand(() -> driveSubsystem.speedDown())); // vitesse baissé
+  rBumper2.onTrue(new InstantCommand(() -> driveSubsystem.speedUp())); // Vitesse augmenté
+  lBumper2.onTrue(new InstantCommand(() -> driveSubsystem.speedDown())); // vitesse baissé
     
-      
-
-      
-}    
-
-    else{
-      
-      manette.a().whileTrue(new OutTakeCmd(outTakeSubsystem));
-      manette.b().onTrue(new IntakeAlgueCmd(intakeAlgueSubsystem));
-
-      manette.x().whileTrue(new OutTakeAlgueCmd(outTakeAlgueSubsystem));
-
-      manette.back().whileTrue(new InstantCommand(()->driveSubsystem.reverse()));
-
-      UpButton.onTrue(new ElevatorUpCmd(elevatorSubsystem));
-      DownButton.onTrue(new ElevatorDownCmd(elevatorSubsystem));
-
-    LeftButton.onTrue(new ArmUpCmd(armSubsystem));
-    RightButton.onTrue(new ArmDownCmd(armSubsystem));
-    
-    rBumper.onTrue(new InstantCommand(() -> driveSubsystem.speedUp())); // Vitesse augmenté
-    lBumper.onTrue(new InstantCommand(() -> driveSubsystem.speedDown())); // vitesse baissé
-
-    
-    }
-  
   }
+  
+  
 
   /**
    * 

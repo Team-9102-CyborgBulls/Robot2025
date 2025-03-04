@@ -14,16 +14,18 @@ public class Auto1CoralR extends SequentialCommandGroup{
     public Auto1CoralR(){
         addCommands(new DriveForDistanceCmd(2.2));
         addCommands(new TurnToAngleCmd(RobotContainer.driveSubsystem,-30));
-        addCommands(new DriveForDistanceCmd(0.4));
+        addCommands(new DriveForDistanceCmd(0.8));
         addCommands(new ElevatorUpCmd(RobotContainer.elevatorSubsystem));
         addCommands(new OutTakeAutoCmd(RobotContainer.outTakeSubsystem));
         addCommands(new ElevatorDownCmd(RobotContainer.elevatorSubsystem));
         addCommands(new DriveForDistanceCmd(-1));
-        addCommands(new TurnToAngleCmd(RobotContainer.driveSubsystem,-100));
-        addCommands(new DriveForDistanceCmd(-4.3));
+        addCommands(new TurnToAngleCmd(RobotContainer.driveSubsystem,-67));
+        addCommands(new DriveForDistanceCmd(-4));
         addCommands(new OutTakeAutoCmd(RobotContainer.outTakeSubsystem));
         addCommands(new DriveForDistanceCmd(4.3));
         addCommands(new TurnToAngleCmd(RobotContainer.driveSubsystem,120));
-        addCommands(new DriveForDistanceCmd(1.3));
+        addCommands(new DriveForDistanceCmd(1.5));
+        addCommands(new ElevatorUpCmd(RobotContainer.elevatorSubsystem));
+        addCommands(new OutTakeAutoCmd(RobotContainer.outTakeSubsystem));
     }
 }

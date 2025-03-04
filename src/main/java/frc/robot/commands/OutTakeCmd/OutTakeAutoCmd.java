@@ -33,7 +33,7 @@ public class OutTakeAutoCmd extends Command {
       return true;
   } 
   else{*/
-    if(RobotContainer.m_timer.get() >= 1){
+    if(RobotContainer.m_timer.get() >= 3){
       return true;
     }else
     {
