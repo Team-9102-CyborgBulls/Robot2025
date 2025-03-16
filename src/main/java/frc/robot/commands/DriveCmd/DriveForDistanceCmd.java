@@ -71,13 +71,13 @@ public class DriveForDistanceCmd extends Command {
   @Override
   public boolean isFinished() {
     
-    if(error >= 0 && error <= 0.3){
+    if(error >= 0 && error <= 0.5){
       finCmd = true;
       return true;
       
       
     }
-    else if(error <= 0 && error >= -0.3){
+    else if(error <= 0 && error >= -0.5){
       finCmd = true;
       return true;
       

@@ -66,7 +66,7 @@ public class TurnToAngleCmd extends Command{
     @Override
     public boolean isFinished() {
     
-    if(Math.abs(error) <= 3){    
+    if(Math.abs(error) <= 5){    
       return true;
     }
     else{

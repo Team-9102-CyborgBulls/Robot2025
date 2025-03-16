@@ -58,6 +58,10 @@ public class ElevatorSubsystem extends SubsystemBase {
         else if(elevation == Constants.ElevatorConstants.ELEVATOR_L3_POSITION){
             elevation = Constants.ElevatorConstants.ELEVATOR_L2_POSITION;
         }
+
+        else if(elevation == Constants.ElevatorConstants.ELEVATOR_L1_POSITION){
+            elevation = Constants.ElevatorConstants.ELEVATOR_L2_POSITION;
+        }
         return elevation;
     }
     

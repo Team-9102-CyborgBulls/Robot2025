@@ -6,11 +6,11 @@ import frc.robot.subsystems.IntakeAlgueSubsystem;
 import frc.robot.subsystems.OutTakeAlgueSubsystem;
 
 
-public class IntakeAlgueCmd extends Command {
+public class IntakeAlgueReverseCmd extends Command {
     
     IntakeAlgueSubsystem m_intake;
 
-    public IntakeAlgueCmd(IntakeAlgueSubsystem intakeAlgueSubsystem){
+    public IntakeAlgueReverseCmd(IntakeAlgueSubsystem intakeAlgueSubsystem){
 
       this.m_intake = intakeAlgueSubsystem;
       addRequirements(m_intake);
@@ -26,7 +26,7 @@ public class IntakeAlgueCmd extends Command {
 
   @Override
   public void execute() {
-    m_intake.setIntakeAlgueMotor(0.3);
+    m_intake.setIntakeAlgueMotor(-0.3);
   }
 
   @Override
@@ -35,7 +35,7 @@ public class IntakeAlgueCmd extends Command {
       return true;
   }
   else{
-    return false; 
+    return false;
   }
   }
 

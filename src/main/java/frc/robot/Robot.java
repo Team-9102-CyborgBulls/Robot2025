@@ -65,10 +65,13 @@ public class Robot extends TimedRobot {
    // SmartDashboard.putNumber("left y",m_robotContainer.leftY);
     CommandScheduler.getInstance().run();
     SmartDashboard.putBoolean("intake sensor",m_robotContainer.outTakeSubsystem.intake_sensor.get());
+    SmartDashboard.putBoolean("limit witch",m_robotContainer.outTakeAlgueSubsystem.limitSwitchActivated());
     SmartDashboard.putNumber("setpoint", m_robotContainer.elevatorSubsystem.setelevator);
-    SmartDashboard.putBoolean("manuel", m_robotContainer.useManette1);
+    SmartDashboard.putNumber("direction", m_robotContainer.driveSubsystem.direction);
 
-    SmartDashboard.putBoolean("lastState", m_robotContainer.lastButtonState);
+    //SmartDashboard.putNumber("getY", )
+    
+
        
     //m_robotContainer.driveSubsystem.setFollowers();
 

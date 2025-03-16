@@ -1,14 +1,14 @@
-package frc.robot.commands.OutTakeCmd;
+package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.RobotContainer;
 import frc.robot.subsystems.OutTakeCoralSubsystem;
 
-public class OutTakeCmd extends Command {
+public class IntakeCoralCmd extends Command {
     
     OutTakeCoralSubsystem m_outTake;
 
-    public OutTakeCmd(OutTakeCoralSubsystem outTake){
+    public IntakeCoralCmd(OutTakeCoralSubsystem outTake){
 
       this.m_outTake = outTake;
       addRequirements(m_outTake);
@@ -24,17 +24,17 @@ public class OutTakeCmd extends Command {
 
   @Override
   public void execute() {
-    m_outTake.setOutTakeMotor(-0.35);
+    m_outTake.setOutTakeMotor(-0.3);
   }
 
   @Override
   public boolean isFinished() {
-   /*  if(m_outTake.intake_sensor.get() == true){ //a définir
+     if(m_outTake.intake_sensor.get()){ //a définir
       return true;
   } 
-  else{*/
+  else{
     return false;
-  //}
+  }
   }
 
   @Override

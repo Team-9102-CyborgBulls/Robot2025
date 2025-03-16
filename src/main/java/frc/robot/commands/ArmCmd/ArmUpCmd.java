@@ -46,7 +46,7 @@ double setpoint;
 
   @Override
   public boolean isFinished() {
-    if (m_armSubsytem.getEncoderArmValue() >= 150){
+     if (m_armSubsytem.getEncoderArmValue() >= 175){
       return true;
     }
     else if(m_armSubsytem.getEncoderArmValue() >= 60 && m_armSubsytem.getEncoderArmValue() <= 61){

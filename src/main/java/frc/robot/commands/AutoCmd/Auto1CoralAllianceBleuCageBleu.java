@@ -10,22 +10,22 @@ import frc.robot.commands.OutTakeCmd.OutTakeAutoCmd;
 import frc.robot.commands.OutTakeCmd.OutTakeCmd;
 import frc.robot.subsystems.ElevatorSubsystem;
 
-public class Auto1CoralR extends SequentialCommandGroup{
-    public Auto1CoralR(){
-        addCommands(new DriveForDistanceCmd(2.2));
-        addCommands(new TurnToAngleCmd(RobotContainer.driveSubsystem,-30));
+public class Auto1CoralAllianceBleuCageBleu extends SequentialCommandGroup{
+    public Auto1CoralAllianceBleuCageBleu(){
+        addCommands(new DriveForDistanceCmd(2.4));
+        addCommands(new TurnToAngleCmd(RobotContainer.driveSubsystem,-45));
         addCommands(new DriveForDistanceCmd(0.8));
         addCommands(new ElevatorUpCmd(RobotContainer.elevatorSubsystem));
         addCommands(new OutTakeAutoCmd(RobotContainer.outTakeSubsystem));
         addCommands(new ElevatorDownCmd(RobotContainer.elevatorSubsystem));
-        addCommands(new DriveForDistanceCmd(-1));
+        /*addCommands(new DriveForDistanceCmd(-1));
         addCommands(new TurnToAngleCmd(RobotContainer.driveSubsystem,-67));
-        addCommands(new DriveForDistanceCmd(-4));
+        addCommands(new DriveForDistanceCmd(-2));
         addCommands(new OutTakeAutoCmd(RobotContainer.outTakeSubsystem));
         addCommands(new DriveForDistanceCmd(4.3));
         addCommands(new TurnToAngleCmd(RobotContainer.driveSubsystem,120));
         addCommands(new DriveForDistanceCmd(1.5));
         addCommands(new ElevatorUpCmd(RobotContainer.elevatorSubsystem));
-        addCommands(new OutTakeAutoCmd(RobotContainer.outTakeSubsystem));
+        addCommands(new OutTakeAutoCmd(RobotContainer.outTakeSubsystem));*/
     }
 }

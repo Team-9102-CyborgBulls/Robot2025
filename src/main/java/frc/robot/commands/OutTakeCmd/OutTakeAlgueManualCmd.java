@@ -10,11 +10,11 @@ import frc.robot.subsystems.OutTakeAlgueSubsystem;
 
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
-public class OutTakeAlgueCmd extends Command {
+public class OutTakeAlgueManualCmd extends Command {
 
   OutTakeAlgueSubsystem m_outTakeAlgue;
   /** Creates a new OutTakeAlgueCmd. */
-  public OutTakeAlgueCmd(OutTakeAlgueSubsystem outTakeAlgueSubsystem) {
+  public OutTakeAlgueManualCmd(OutTakeAlgueSubsystem outTakeAlgueSubsystem) {
     // Use addRequirements() here to declare subsystem dependencies.
     this.m_outTakeAlgue = outTakeAlgueSubsystem;
     addRequirements(m_outTakeAlgue);
@@ -27,7 +27,7 @@ public class OutTakeAlgueCmd extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    m_outTakeAlgue.setOutTakeAlgueMotor(0.8);
+    m_outTakeAlgue.setOutTakeAlgueMotor(0.3);
   }
 
   // Called once the command ends or is interrupted.

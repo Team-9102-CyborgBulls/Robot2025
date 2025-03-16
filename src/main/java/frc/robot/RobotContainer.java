@@ -5,16 +5,21 @@
 package frc.robot;
 
 
-import frc.robot.commands.AutoCmd.Auto1CoralM;
+import frc.robot.commands.AutoCmd.Auto1CoralMidle;
+import frc.robot.commands.AutoCmd.AutoTurn;
 import frc.robot.commands.GettingInRangeCmd;
 import frc.robot.commands.IntakeAlgueCmd;
+import frc.robot.commands.IntakeAlgueReverseCmd;
+import frc.robot.commands.IntakeCoralCmd;
 import frc.robot.commands.NothingCmd;
 import frc.robot.commands.ArmCmd.ArmDownCmd;
 import frc.robot.commands.ArmCmd.ArmUpCmd;
 
 import frc.robot.commands.ArmCmd.ArmStillCmd;
-import frc.robot.commands.AutoCmd.Auto1CoralL;
-import frc.robot.commands.AutoCmd.Auto1CoralR;
+import frc.robot.commands.AutoCmd.Auto1CoralAllianceBleuCageBleu;
+import frc.robot.commands.AutoCmd.Auto1CoralAllianceBleuCageRouge;
+import frc.robot.commands.AutoCmd.Auto1CoralAllianceRougeCageBleu;
+import frc.robot.commands.AutoCmd.Auto1CoralAllianceRougeCagesRouges;
 import frc.robot.commands.DriveCmd.DriveCmd;
 import frc.robot.commands.DriveCmd.DriveForDistanceCmd;
 import frc.robot.commands.DriveCmd.TurnToAngleCmd;
@@ -25,6 +30,7 @@ import frc.robot.commands.ElevatorCmd.ElevatorUpCmd;
 import frc.robot.commands.ElevatorCmd.ElevatorUpManualCmd;
 import frc.robot.commands.OutTakeCmd.OutTakeCmd;
 import frc.robot.commands.OutTakeCmd.OutTakeAlgueCmd;
+import frc.robot.commands.OutTakeCmd.OutTakeAlgueManualCmd;
 import frc.robot.commands.OutTakeCmd.OutTakeAutoCmd;
 import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.DriveSubsystem;
@@ -94,6 +100,7 @@ public class RobotContainer {
   
   public final OutTakeAlgueSubsystem outTakeAlgueSubsystem = new OutTakeAlgueSubsystem();
   public final OutTakeAlgueCmd outTakeAlgueCmd = new OutTakeAlgueCmd(outTakeAlgueSubsystem);
+  public final IntakeCoralCmd intakeCoralCmd = new IntakeCoralCmd(outTakeSubsystem);
   
   
   public UsbCamera drivercamera = CameraServer.startAutomaticCapture();
@@ -106,25 +113,34 @@ public class RobotContainer {
 
   public SendableChooser<Command> m_Chooser = new SendableChooser<Command>();
 
-  public final DriveForDistanceCmd Drive1m = new DriveForDistanceCmd(1);
+  public final DriveForDistanceCmd Drive0_3m = new DriveForDistanceCmd(0.3);
   public final TurnToAngleCmd Turn90 = new TurnToAngleCmd(driveSubsystem,90);
-  public final Auto1CoralR auto1CoralR = new Auto1CoralR();
-  public final Auto1CoralM auto1CoralM = new Auto1CoralM();
-  public final Auto1CoralL auto1CoralL = new Auto1CoralL();
+
+  public final Auto1CoralAllianceRougeCagesRouges auto1CoralRR = new Auto1CoralAllianceRougeCagesRouges();
+  public final Auto1CoralMidle auto1CoralM = new Auto1CoralMidle();
+  public final Auto1CoralAllianceBleuCageRouge auto1CoralBR = new Auto1CoralAllianceBleuCageRouge();
+  public final Auto1CoralAllianceRougeCageBleu auto1CoralRB = new Auto1CoralAllianceRougeCageBleu();
+  public final Auto1CoralAllianceBleuCageBleu auto1CoralBB = new Auto1CoralAllianceBleuCageBleu();
 
   public final NothingCmd nothingCmd = new NothingCmd(driveSubsystem);
+
+  public final AutoTurn turn = new AutoTurn();
  
   public RobotContainer() {
     // Configure the trigger bindings
     configureBindings();
 
     // Add commands to the autonomous command chooser
-    m_Chooser.setDefaultOption("Auto Test",Drive1m );
+    m_Chooser.setDefaultOption("Auto Test",Drive0_3m );
 
-    m_Chooser.addOption("Auto Turn", Turn90);
-    m_Chooser.addOption("Auto R", auto1CoralR);
-    m_Chooser.addOption("Auto M", auto1CoralM);
-    m_Chooser.addOption("Auto L", auto1CoralL);
+    //m_Chooser.addOption("Auto Turn", Turn90);
+    m_Chooser.addOption("Auto A Rouge C Rouge", auto1CoralRR);
+    m_Chooser.addOption("Auto Midle", auto1CoralM);
+    m_Chooser.addOption("Auto A Rouge C Bleu", auto1CoralRB);
+    m_Chooser.addOption("Auto A Bleu C Bleu", auto1CoralBB);
+    m_Chooser.addOption("Auto A Bleu C Rouge", auto1CoralBR);
+    m_Chooser.addOption("Ligne", Drive0_3m);
+    m_Chooser.addOption("turn", turn);
     
 
     //Put the chooser on the dashboard
@@ -195,10 +211,24 @@ public class RobotContainer {
         }));
        
 
+        new JoystickButton(k_joystick, 2)
+        .whileTrue(new ArmUpCmd(armSubsystem));
+       
+        new JoystickButton(k_joystick, 1)
+        .whileTrue(new ArmDownCmd(armSubsystem));
+
+        new JoystickButton(k_joystick, 11)
+        .whileTrue(new OutTakeAlgueManualCmd(outTakeAlgueSubsystem)); 
+            
+        new JoystickButton(k_joystick, 12).whileTrue(new IntakeAlgueReverseCmd(intakeAlgueSubsystem));
+           
+       
+
 
   manette.a().whileTrue(new OutTakeCmd(outTakeSubsystem));
-  manette.b().onTrue(new IntakeAlgueCmd(intakeAlgueSubsystem));
+  manette.b().whileTrue(new IntakeCoralCmd(outTakeSubsystem));
 
+  manette.y().onTrue(new IntakeAlgueCmd(intakeAlgueSubsystem));
   manette.x().whileTrue(new OutTakeAlgueCmd(outTakeAlgueSubsystem));
 
   manette.back().whileTrue(new InstantCommand(()->driveSubsystem.reverse()));
@@ -218,8 +248,9 @@ public class RobotContainer {
       
      
   manette2.a().whileTrue(new OutTakeCmd(outTakeSubsystem));
-  manette2.b().onTrue(new IntakeAlgueCmd(intakeAlgueSubsystem));
+  manette2.b().whileTrue(new IntakeCoralCmd(outTakeSubsystem));
 
+  manette2.y().whileTrue(new IntakeAlgueCmd(intakeAlgueSubsystem));
   manette2.x().whileTrue(new OutTakeAlgueCmd(outTakeAlgueSubsystem));
 
     
